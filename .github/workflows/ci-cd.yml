@@ -39,9 +39,14 @@ jobs:
           --acl private \
           zip/deploy.zip s3://carssork-deploy/dev/
     
-    - name: code Deploy
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: AWS Code Deploy Upload
       run: |
         aws deploy create-deployment --application-name carssork-deploy \
         --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name carssork-deploy-dev \
-        --s3-location bucket=${{secrets.AWS_S3_BUCKET}},bundleType=zip,key=deploy.zip
+        --s3-location bucket=${{secrets.AWS_S3_BUCKET}},bundleType=zip,key=dev/deploy.zip
    
