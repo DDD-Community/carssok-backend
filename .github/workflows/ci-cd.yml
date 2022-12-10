@@ -47,6 +47,6 @@ jobs:
     - name: code Deploy
       run: |
         aws deploy create-deployment --application-name carssork-deploy \
-        --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name carssork-deploy \
+        --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name carssork-deploy-dev \
         --s3-location bucket=${{secrets.AWS_S3_BUCKET}},bundleType=zip,key=deploy.zip
    
