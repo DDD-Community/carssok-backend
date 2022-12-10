@@ -42,7 +42,7 @@ jobs:
       run: |
           aws s3 sync \
           --acl private \
-          ./build/zip/ s3://carssork-deploy/dev
+          deploy.zip s3://carssork-deploy/dev
     
     - name: code Deploy
       run: |
