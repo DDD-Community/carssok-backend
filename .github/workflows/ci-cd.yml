@@ -31,13 +31,13 @@ jobs:
         aws-region:  ap-northeast-2
   
     - name: Zip Build file
-      run:  zip -qq -r deploy.zip dist
+      run:  mkdir ./zip && cp -r ./script ./dist ./zip && cd ./zip && zip -qq -r deploy.zip .
 
     - name: S3 Deploy file Copy
       run: |
           aws s3 cp \
           --acl private \
-          deploy.zip s3://carssork-deploy/dev/
+          zip/deploy.zip s3://carssork-deploy/dev/
     
     - name: code Deploy
       run: |
