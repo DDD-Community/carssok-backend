@@ -1,4 +1,5 @@
 cd /home/ec2-user/app
-cp -r ./dist ./node_modules ./carssork
-rm -rf ./dist *.yml ./script
+cp -r ./dist ./carssork
+cp -r ./node_modules ./carssork
+rm -rf ./dist *.yml ./script ./node_modules
 
