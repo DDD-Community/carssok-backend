@@ -31,7 +31,7 @@ jobs:
         aws-region:  ap-northeast-2
   
     - name: Zip Build file
-      run:  mkdir ./zip && cp -r ./script ./dist ./appspec.yml ./zip && cd ./zip && zip -qq -r deploy.zip .
+      run:  mkdir ./zip && cp -r ./script ./dist ./appspec.yml ./node_modules ./zip && cd ./zip && zip -qq -r deploy.zip .
 
     - name: S3 Deploy file Copy
       run: |
