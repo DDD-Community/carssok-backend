@@ -38,11 +38,11 @@ jobs:
     - name: Zip Build file
       run:  zip -qq -r deploy.zip dist
 
-    - name: S3 Sync
+    - name: S3 Deploy file Copy
       run: |
-          aws s3 sync \
+          aws s3 cp \
           --acl private \
-          ./deploy.zip s3://carssork-deploy/dev/
+          deploy.zip s3://carssork-deploy/dev/
     
     - name: code Deploy
       run: |
