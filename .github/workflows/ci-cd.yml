@@ -1,0 +1,59 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: Node.js CI
+
+on:
+  push:
+    branches: [ "chore/ci", "develop" ]
+  pull_request:
+    branches: [ "chore/ci", "develop" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 17
+        cache: 'npm'
+    - run: npm ci
+    - run: npm run build --if-present
+
+    - name: AWS CONFIG
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region:  ap-northeast-2
+  
+    - name: Zip Build file
+      run:  mkdir ./zip && cp -r ./script ./dist ./appspec.yml ./node_modules ./zip && cd ./zip && zip -qq -r deploy.zip .
+
+    - name: S3 Deploy file Copy
+      run: |
+          aws s3 cp \
+          --acl private \
+          zip/deploy.zip s3://carssork-deploy/dev/
+    
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: AWS CONFIG
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region:  ap-northeast-2
+        
+    - name: AWS Code Deploy Upload
+      run: |
+        aws deploy create-deployment --application-name carssork-deploy \
+        --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name carssork-deploy-dev \
+        --s3-location bucket=${{secrets.AWS_S3_BUCKET}},bundleType=zip,key=dev/deploy.zip
+   
