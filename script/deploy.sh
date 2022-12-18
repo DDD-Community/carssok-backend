@@ -6,4 +6,4 @@ rm -rf ./dist *.yml ./script ./node_modules
 cd carssork
 cp .env ./carssork
 
-pm2 restart main
+sudo pm2 restart main
