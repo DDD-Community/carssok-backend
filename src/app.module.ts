@@ -1,7 +1,6 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
 import { HelloController } from './hello/hello.controller';
 import { SimpleAuthMiddleware } from './simple-auth/simple-auth.middleware';
 import { Device } from './user/entities/device.entity';
@@ -24,7 +23,7 @@ const env :envType = (process.env.NODE_ENV || "development") as envType
       username: process.env.MYSQL_USERNAME,
       password: process.env.MYSQL_PASSWORD,
       database: process.env.MYSQL_DATABASE,
-      entities: [User, UserCar, Device],
+      entities: [User, UserCar, Device], //TODO entity 페스 안먹음
       synchronize: false,
       logging: ["query"],
     }),
