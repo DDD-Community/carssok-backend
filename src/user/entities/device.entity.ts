@@ -1,7 +1,13 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { User } from './user.entity';
 
-@Entity("device")
+@Entity('device')
 export class Device {
   @PrimaryGeneratedColumn()
   device_id: number;
@@ -9,13 +15,10 @@ export class Device {
   @Column()
   device_token: string;
 
-  @ManyToOne(() => User, {lazy: true})
+  @ManyToOne(() => User, { lazy: true })
   @JoinColumn({
     name: 'user_id',
-    referencedColumnName: 'user_id'
+    referencedColumnName: 'user_id',
   })
   user: User;
-
-  
-
 }

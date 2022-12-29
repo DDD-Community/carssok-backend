@@ -1,4 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { User } from './user.entity';
 
 @Entity()
@@ -12,10 +18,10 @@ export class UserCar {
   @Column()
   nickname: string;
 
-  @ManyToOne(()=>User)
+  @ManyToOne(() => User)
   @JoinColumn({
     name: 'user_id',
-    referencedColumnName: 'user_id'
+    referencedColumnName: 'user_id',
   })
   user: User;
 }
