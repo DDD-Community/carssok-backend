@@ -7,17 +7,34 @@ import { UserCar } from './entities/user_car.entity';
 
 @Injectable()
 export class UserService {
-    constructor(
-        @InjectRepository(User)
-        private userRepository: Repository<User>,
-        @InjectRepository(Device)
-        private deviceRepository: Repository<Device>,
-        @InjectRepository(UserCar)
-        private userCarRepository: Repository<UserCar>         
-    ) {}
+  constructor(
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+    @InjectRepository(Device)
+    private deviceRepository: Repository<Device>,
+    @InjectRepository(UserCar)
+    private userCarRepository: Repository<UserCar>,
+  ) {}
 
-    async findDeviceId(token: string): Promise<Device> { 
-        return this.deviceRepository.createQueryBuilder("device").leftJoinAndSelect("device.user" , "user").where("device.device_token = :device_token",{device_token: token}).getOne()
-    }
+  async findDeviceId(token: string): Promise<Device> {
+    return this.deviceRepository
+      .createQueryBuilder('device')
+      .leftJoinAndSelect('device.user', 'user')
+      .where('device.device_token = :device_token', { device_token: token })
+      .getOne();
+  }
 
+  async isUser(id: number): Promise<boolean> {
+    return (
+      this.userRepository.findOne({
+        where: { user_id: id },
+      }) != null
+    );
+  }
+
+  async saveDevice(id: string): Promise<Device> {
+    const device = new Device();
+    device.device_token = id;
+    return this.deviceRepository.save(device);
+  }
 }
