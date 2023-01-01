@@ -33,9 +33,8 @@ export class UserService {
   }
 
   async isDevice(id: string): Promise<boolean> {
-    return (
-      this.deviceRepository.findOne({ where: { device_token: id } }) != null
-    );
+    const device = await this.deviceRepository.findOne({ where: { device_token: id } })
+    return device != null;
   }
 
   async saveDevice(id: string): Promise<User> {

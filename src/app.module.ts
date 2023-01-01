@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { HelloController } from './hello/hello.controller';
@@ -36,6 +36,10 @@ const env: envType = (process.env.NODE_ENV || 'development') as envType;
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(SimpleAuthMiddleware).forRoutes('*');
+    consumer.apply(SimpleAuthMiddleware)
+    .exclude({
+      path: '/auth', method: RequestMethod.POST
+    })
+    .forRoutes('*');
   }
 }
