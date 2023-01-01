@@ -2,9 +2,7 @@ import {
   Body,
   Controller,
   Get,
-  HttpCode,
   HttpException,
-  HttpStatus,
   Inject,
   Post,
   Req,
@@ -33,4 +31,13 @@ export class SimpleAuthController {
       throw new HttpException('일치하는 유저가 존재하지 않습니다.', 410);
     }
   }
+
+  @Post()
+  async registerDevice(@Body() body){
+      const id = body['device_id'];
+      const user = await this.userService.saveDevice(id)
+      const encrypt = await encryptionUtills.encrypt(user.user_id.toString());
+      return { useToken: encrypt };
+  }
+
 }

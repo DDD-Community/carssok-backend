@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Device } from './entities/device.entity';
@@ -7,14 +7,14 @@ import { UserCar } from './entities/user_car.entity';
 
 @Injectable()
 export class UserService {
-  constructor(
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
-    @InjectRepository(Device)
-    private deviceRepository: Repository<Device>,
-    @InjectRepository(UserCar)
-    private userCarRepository: Repository<UserCar>,
-  ) {}
+  
+  @InjectRepository(User)
+  private readonly userRepository: Repository<User>
+  @InjectRepository(Device)
+  private readonly deviceRepository: Repository<Device>
+  @InjectRepository(UserCar)
+  private readonly userCarRepository: Repository<UserCar>
+
 
   async findDeviceId(token: string): Promise<Device> {
     return this.deviceRepository
@@ -32,9 +32,20 @@ export class UserService {
     );
   }
 
-  async saveDevice(id: string): Promise<Device> {
-    const device = new Device();
-    device.device_token = id;
-    return this.deviceRepository.save(device);
+  async isDevice(id: string): Promise<boolean> {
+    return (
+      this.deviceRepository.findOne({ where: { device_token: id } }) != null
+    );
+  }
+
+  async saveDevice(id: string): Promise<User> {
+    try {
+      if (await this.isDevice(id)) throw new Error();
+      const user: User = await this.userRepository.save(new User());
+      this.deviceRepository.insert({ device_token: id, user: user });
+      return user;
+    } catch (error) {
+      throw new HttpException('이미 등록된 Device 입니다.', 413);
+    }
   }
 }
