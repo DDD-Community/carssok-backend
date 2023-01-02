@@ -9,6 +9,13 @@ import { UserCar } from './user/entities/user_car.entity';
 import { UserModule } from './user/user.module';
 import { SimpleAuthModule } from './simple-auth/simple-auth.module';
 import { SimpleAuthController } from './simple-auth/simple-auth.controller';
+import { RecordController } from './record/record.controller';
+import { RecordService } from './record/record.service';
+import { RecordModule } from './record/record.module';
+import { Accident } from './record/entities/accident.entity';
+import { Run } from './record/entities/run.entity';
+import { Maintenance } from './record/entities/maintenance.entity';
+import { Fuel } from './record/entities/fuel.entity';
 
 type envType = 'production' | 'test' | 'development';
 const env: envType = (process.env.NODE_ENV || 'development') as envType;
@@ -23,16 +30,17 @@ const env: envType = (process.env.NODE_ENV || 'development') as envType;
       username: process.env.MYSQL_USERNAME,
       password: process.env.MYSQL_PASSWORD,
       database: process.env.MYSQL_DATABASE,
-      entities: [User, UserCar, Device], //TODO entity 페스 안먹음
+      entities: [User, UserCar, Device, Accident, Fuel, Run, Maintenance],
       synchronize: false,
       logging: ['query'],
     }),
     ConfigModule,
     UserModule,
     SimpleAuthModule,
+    RecordModule,
   ],
-  controllers: [HelloController, SimpleAuthController],
-  providers: [UserModule],
+  controllers: [HelloController, SimpleAuthController, RecordController],
+  providers: [UserModule, RecordService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
