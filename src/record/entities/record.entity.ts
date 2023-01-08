@@ -1,11 +1,9 @@
-import { Column, CreateDateColumn, OneToMany, PrimaryColumn, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { User } from "src/user/entities/user.entity";
+import { Column, CreateDateColumn, JoinColumn, ManyToOne, OneToMany, PrimaryColumn, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 export abstract class Record {
     @PrimaryGeneratedColumn()
     id: number
-
-    @Column()
-    recordType: string
 
     @Column()
     isDeleteAt: boolean
@@ -21,6 +19,13 @@ export abstract class Record {
 
     @UpdateDateColumn()
     updateAt: Date
+
+    @ManyToOne(() => User, { lazy: true })
+    @JoinColumn({
+        name: 'user_id',
+        referencedColumnName: 'user_id',
+    })
+    user: User
 
 
 }

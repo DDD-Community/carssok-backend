@@ -32,7 +32,7 @@ const env: envType = (process.env.NODE_ENV || 'development') as envType;
       database: process.env.MYSQL_DATABASE,
       entities: [User, UserCar, Device, Accident, Fuel, Run, Maintenance],
       synchronize: false,
-      logging: ['query'],
+      logging: ['query', 'warn', 'error'],
     }),
     ConfigModule,
     UserModule,
@@ -40,7 +40,7 @@ const env: envType = (process.env.NODE_ENV || 'development') as envType;
     RecordModule,
   ],
   controllers: [HelloController, SimpleAuthController, RecordController],
-  providers: [UserModule, RecordService],
+  providers: [UserModule, RecordModule],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
