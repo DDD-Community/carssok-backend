@@ -24,6 +24,12 @@ export class UserService {
       .getOne();
   }
 
+  async findUserId(id: number): Promise<User> {
+    return this.userRepository.findOne({
+      where: {user_id: id}
+    });
+  }
+
   async isUser(id: number): Promise<boolean> {
     return (
       this.userRepository.findOne({
