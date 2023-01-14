@@ -9,13 +9,13 @@ import { UserCar } from './user/entities/user_car.entity';
 import { UserModule } from './user/user.module';
 import { SimpleAuthModule } from './simple-auth/simple-auth.module';
 import { SimpleAuthController } from './simple-auth/simple-auth.controller';
-import { RecordController } from './record/record.controller';
-import { RecordService } from './record/record.service';
 import { RecordModule } from './record/record.module';
 import { Accident } from './record/entities/accident.entity';
 import { Run } from './record/entities/run.entity';
 import { Maintenance } from './record/entities/maintenance.entity';
 import { Fuel } from './record/entities/fuel.entity';
+import { FuelController } from './record/fuel/fuel.controller';
+import { RunService } from './record/run/run.service';
 
 type envType = 'production' | 'test' | 'development';
 const env: envType = (process.env.NODE_ENV || 'development') as envType;
@@ -31,7 +31,7 @@ const env: envType = (process.env.NODE_ENV || 'development') as envType;
       password: process.env.MYSQL_PASSWORD,
       database: process.env.MYSQL_DATABASE,
       entities: [User, UserCar, Device, Accident, Fuel, Run, Maintenance],
-      synchronize: false,
+      synchronize: true,
       logging: ['query', 'warn', 'error'],
     }),
     ConfigModule,
@@ -39,7 +39,7 @@ const env: envType = (process.env.NODE_ENV || 'development') as envType;
     SimpleAuthModule,
     RecordModule,
   ],
-  controllers: [HelloController, SimpleAuthController, RecordController],
+  controllers: [HelloController, SimpleAuthController, FuelController],
   providers: [UserModule, RecordModule],
 })
 export class AppModule implements NestModule {

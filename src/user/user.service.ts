@@ -1,5 +1,6 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { encryptionUtills } from 'src/utils/encryption';
 import { Repository } from 'typeorm';
 import { Device } from './entities/device.entity';
 import { User } from './entities/user.entity';
@@ -22,6 +23,13 @@ export class UserService {
       .leftJoinAndSelect('device.user', 'user')
       .where('device.device_token = :device_token', { device_token: token })
       .getOne();
+  }
+
+  async findUserbyToken(token: string): Promise<User> {
+    const userId = parseInt(
+      await encryptionUtills.decrypt(token),
+    );
+    return this.findUserId(userId);
   }
 
   async findUserId(id: number): Promise<User> {

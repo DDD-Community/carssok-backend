@@ -1,22 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/entities/user.entity';
-import { Between, Repository } from 'typeorm';
-import { RunRecordRequest } from './dto/run-record-request';
-import { Accident } from './entities/accident.entity';
-import { Fuel } from './entities/fuel.entity';
-import { Maintenance } from './entities/maintenance.entity';
-import { Run } from './entities/run.entity';
+import { Repository, Between } from 'typeorm';
+import { RunRecordRequest } from '../dto/run-record-request';
+import { Run } from '../entities/run.entity';
 
 @Injectable()
-export class RecordService {
-    
-    @InjectRepository(Accident)
-    private readonly accidentRepository: Repository<Accident>
-    @InjectRepository(Fuel)
-    private readonly fuelRepository: Repository<Fuel>
-    @InjectRepository(Maintenance)
-    private readonly maintenanceRepository: Repository<Maintenance>
+export class RunService {
+
     @InjectRepository(Run)
     private readonly runRepository: Repository<Run>
 
@@ -39,6 +30,4 @@ export class RecordService {
             }
         })
     }
-    
-
 }
