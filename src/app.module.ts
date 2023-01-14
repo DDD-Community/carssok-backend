@@ -15,7 +15,6 @@ import { Run } from './record/entities/run.entity';
 import { Maintenance } from './record/entities/maintenance.entity';
 import { Fuel } from './record/entities/fuel.entity';
 import { FuelController } from './record/fuel/fuel.controller';
-import { RunService } from './record/run/run.service';
 
 type envType = 'production' | 'test' | 'development';
 const env: envType = (process.env.NODE_ENV || 'development') as envType;

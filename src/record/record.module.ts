@@ -12,11 +12,13 @@ import { RunService } from './run/run.service';
 import { RunController } from './run/run.controller';
 import { FuelController } from './fuel/fuel.controller';
 import { FuelService } from './fuel/fuel.service';
+import { AccidentController } from './accident/accident.controller';
+import { AccidentService } from './accident/accident.service';
 
 @Module({
     imports: [TypeOrmModule.forFeature([Accident, Fuel, Maintenance, Run, User, Device, UserCar])],
-    controllers: [FuelController, RunController],
-    providers: [UserService, FuelService, RunService],
+    controllers: [FuelController, RunController, AccidentController],
+    providers: [UserService, FuelService, RunService, AccidentService],
     exports: [FuelService, RunService],
   })
 export class RecordModule {}

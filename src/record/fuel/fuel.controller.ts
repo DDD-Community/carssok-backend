@@ -43,6 +43,5 @@ export class FuelController {
     async deleteFuelRecord(@Headers('user_token') token: string, @Param('id') id: number) {
       const user = await this.userService.findUserbyToken(token);
       await this.fuelService.deleteFuelById(user, id);
-
     }
 }
