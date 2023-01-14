@@ -3,7 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { Between, Repository } from 'typeorm';
 import { FuelRecordRequest } from '../dto/fuel-record-request';
+import { FuelRecordListResponse } from '../dto/fuel-list-record-response';
 import { Fuel } from '../entities/fuel.entity';
+import { FuelRecordResponse } from '../dto/fuel-record-response';
 
 @Injectable()
 export class FuelService {
@@ -12,34 +14,38 @@ export class FuelService {
     private readonly fuelRepository: Repository<Fuel>
 
     async saveFuel(user: User, request: FuelRecordRequest) {
-        return await this.fuelRepository.insert(
+        const result = await this.fuelRepository.insert(
             {
                 amount: request.amount, fuelType: request.fuelType, location: request.location,
                 charge: request.charge, memo: request.memo, eventedAt: request.eventDate,
                 user: user
             }
         );
+        return result.identifiers
     }
 
     async findAllFuel(user: User, filter: any) {
-        return await this.fuelRepository.find({
+        const fuels = await this.fuelRepository.find({
             where: {
                 user: user,
                 ...( filter.date && { eventedAt: Between(filter.date, filter.date.setMonth(filter.date.getMonth())) } )
             }
         })
+        return fuels.map(it => new FuelRecordListResponse(it))
     }
 
     async findFuelById(user: User, id: number) {
-        return await this.fuelRepository.findOneBy({user: user, id: id})
+        const fuel = await this.fuelRepository.findOneBy({user: user, id: id})
+        return new FuelRecordResponse(fuel)
     }
 
     async updateFuelById(user: User, id: number, request: Request) {
-        // update방식 JS 처리방식 차용할 예정
+      
     }
 
     async deleteFuelById(user: User, id: number) {
-        return await this.fuelRepository.softDelete({id: id, user: user})
+        const result = await this.fuelRepository.softDelete({id: id, user: user})
+        return result.generatedMaps
     }
 
 }

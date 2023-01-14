@@ -23,9 +23,7 @@ export class FuelController {
     @Get('/fuels')
     async findFuelRecords(@Headers('user_token') token: string) {
       const user = await this.userService.findUserbyToken(token);
-      const fuels = await this.fuelService.findAllFuel(user, {});
-      
-      return 
+      return await this.fuelService.findAllFuel(user, {});
     }
     
 

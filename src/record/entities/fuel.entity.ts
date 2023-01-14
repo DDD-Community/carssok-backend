@@ -16,4 +16,7 @@ export class Fuel extends Record {
     @Column()
     charge: number
 
+    @Column()
+    price: number
+
 }
