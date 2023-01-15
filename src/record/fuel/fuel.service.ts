@@ -6,6 +6,7 @@ import { FuelRecordRequest } from '../dto/fuel-record-request';
 import { FuelRecordListResponse } from '../dto/fuel-list-record-response';
 import { Fuel } from '../entities/fuel.entity';
 import { FuelRecordResponse } from '../dto/fuel-record-response';
+import { RecordFilter } from '../dto/record-filter';
 
 @Injectable()
 export class FuelService {
@@ -18,17 +19,20 @@ export class FuelService {
             {
                 amount: request.amount, fuelType: request.fuelType, location: request.location,
                 charge: request.charge, memo: request.memo, eventedAt: request.eventDate,
-                user: user
+                user: user, price: request.price
             }
         );
-        return result.identifiers
+        return { id: result.identifiers[0].id }
     }
 
-    async findAllFuel(user: User, filter: any) {
+    async findAllFuel(user: User, filter: RecordFilter) {
+        const start: Date = filter.date
+        const end: Date = filter.date
+        end.setMonth(1); //TODO JS-Date Library 검토
         const fuels = await this.fuelRepository.find({
             where: {
                 user: user,
-                ...( filter.date && { eventedAt: Between(filter.date, filter.date.setMonth(filter.date.getMonth())) } )
+                ...( filter.date && { eventedAt: Between(start, end) } )
             }
         })
         return fuels.map(it => new FuelRecordListResponse(it))

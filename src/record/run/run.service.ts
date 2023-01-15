@@ -27,10 +27,13 @@ export class RunService {
     }
 
     async findAllRun(user: User, filter: any){
+        const start: Date = filter.date
+        const end: Date = filter.date
+        end.setMonth(1); //TODO JS-Date Library 검토
         const runs = await this.runRepository.find({
             where: {
                 user: user,
-                ...(filter.date && {eventedAt: Between(filter.date, filter.date.setMonth(filter.date.getMonth()+1))})
+                ...(filter.date && {eventedAt: Between(start, end)})
             }
         })
         return runs.map(it => new RunRecordResponse(it))
@@ -43,6 +46,6 @@ export class RunService {
     }
 
     async deleteRun(user: User, id: number) {
-        return await (await this.runRepository.softDelete({id: id, user: user}))
-    }
+        const result = await this.runRepository.softDelete({id: id, user: user})
+        return result.generatedMaps
 }
