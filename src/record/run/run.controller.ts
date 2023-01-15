@@ -1,9 +1,7 @@
-import { Body, Controller, Get, Inject, Post, Headers, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post, Headers, UseGuards, Put, Param, Delete } from '@nestjs/common';
 import { SimpleAuthGuard } from 'src/simple-auth/simple-auth.guard';
 import { UserService } from 'src/user/user.service';
-import { encryptionUtills } from 'src/utils/encryption';
 import { RunRecordRequest } from '../dto/run-record-request';
-import { RunRecordResponse } from '../dto/run-record-response';
 import { RunService } from './run.service';
 
 @Controller('record')
@@ -16,36 +14,37 @@ export class RunController {
     private readonly runService: RunService
 
    
-
     @Post('/runs')
-    async saveRunRecord(@Headers('user_token') token:string, @Body()response: RunRecordRequest){
-        const userId = parseInt(
-            await encryptionUtills.decrypt(token),
-          );
-        const user = await this.userService.findUserId(userId);
+    async saveRunRecord(@Headers('user-token') token:string, @Body()response: RunRecordRequest){
+        console.log(token)
+        const user = await this.userService.findUserbyToken(token);
         return await this.runService.saveRun(response, user);
     }
 
     @Get('/runs/total-distance')
-    async findUserTotalDistance(@Headers('user_token') token: string) {
-        const userId = parseInt(
-            await encryptionUtills.decrypt(token),
-          );
-        const result = await this.runService.findAccumulateDistance(userId)
+    async findUserTotalDistance(@Headers('user-token') token: string) {
+      const user = await this.userService.findUserbyToken(token);
+        const result = await this.runService.findAccumulateDistance(user)
         return result
     }
 
     @Get('/runs')
-    async findMyRuns(@Headers('user_token') token: string) {
-        const userId = parseInt(
-            await encryptionUtills.decrypt(token),
-          );
-        const user = await this.userService.findUserId(userId);
-        const runs = await this.runService.findAllRun(user, {});
-        let result = [] 
-        for (const run of runs) {
-           result.push(new RunRecordResponse(run));
-        }
-        return result;
+    async findMyRuns(@Headers('user-token') token: string, @Param('filter') date: Date) {
+        const user = await this.userService.findUserbyToken(token);
+        return await this.runService.findAllRun(user, {});
+    }
+
+    @Put('/runs/:id')
+    async updateRunDistance(@Headers('user-token') token: string, @Body('distance') distance: number, @Param('id') id: number) {
+      const user = await this.userService.findUserbyToken(token);
+      const result = await this.runService.updateRun(user, distance, id);
+      return result.id;
+    }
+
+    @Delete('/runs/:id')
+    async deleteRun(@Headers('user-token') token: string, @Param('id') id: number) {
+      const user = await this.userService.findUserbyToken(token);
+      const result = await this.runService.deleteRun(user, id);
+      return result.generatedMaps;
     }
 }
