@@ -12,7 +12,7 @@ export class SimpleAuthMiddleware implements NestMiddleware {
     const headers = req.headers;
     if (
       !headers.hasOwnProperty('device_id') &&
-      !headers.hasOwnProperty('user_token')
+      !headers.hasOwnProperty('user-token')
     ) {
       throw new HttpException(
         '필수 Header가 존재하지 않습니다.',

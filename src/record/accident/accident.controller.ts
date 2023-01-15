@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Inject, Param, Post, Put, UseGuards, Headers } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, Param, Post, Put, UseGuards, Headers, HttpStatus, HttpCode } from '@nestjs/common';
 import { SimpleAuthGuard } from 'src/simple-auth/simple-auth.guard';
 import { UserService } from 'src/user/user.service';
 import { FuelRecordRequest } from '../dto/fuel-record-request';
@@ -14,32 +14,33 @@ export class AccidentController {
     private readonly accidentService: AccidentService
 
     @Post('/accidents')
-    async saveAccidentRecord(@Headers('user_token') token: string, @Body() request: FuelRecordRequest) {
+    @HttpCode(201)
+    async saveAccidentRecord(@Headers('user-token') token: string, @Body() request: FuelRecordRequest) {
       const user = await this.userService.findUserbyToken(token);
       return await this.accidentService.saveAccident(user, request);
     }
 
     @Get('/accidents')
-    async findAccidentRecords(@Headers('user_token') token: string) {
+    async findAccidentRecords(@Headers('user-token') token: string) {
       const user = await this.userService.findUserbyToken(token);
       return await this.accidentService.findAllAccident(user, {});
     }
     
 
     @Get('/accidents/:id')
-    async findAccidentRecord(@Headers('user_token') token: string, @Param('id') id: number) {
+    async findAccidentRecord(@Headers('user-token') token: string, @Param('id') id: number) {
       const user = await this.userService.findUserbyToken(token);
       return await this.accidentService.findAccidnetByid(user, id);
     }
 
     @Put("/accidents/:id")
-    async updateAccidentRecord(@Headers('user_token') token: string, @Param('id') id: number, @Body() request: FuelRecordRequest) {
+    async updateAccidentRecord(@Headers('user-token') token: string, @Param('id') id: number, @Body() request: FuelRecordRequest) {
       const user = await this.userService.findUserbyToken(token);
       
     }
 
     @Delete("/accidents/:id")
-    async deleteAccidentRecord(@Headers('user_token') token: string, @Param('id') id: number) {
+    async deleteAccidentRecord(@Headers('user-token') token: string, @Param('id') id: number) {
       const user = await this.userService.findUserbyToken(token);
       await this.accidentService.deleteAccidentById(user, id);
     }

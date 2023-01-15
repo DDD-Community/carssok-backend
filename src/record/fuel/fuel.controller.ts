@@ -15,32 +15,32 @@ export class FuelController {
 
 
     @Post('/fuels')
-    async saveFuelRecord(@Headers('user_token') token: string, @Body() request: FuelRecordRequest) {
+    async saveFuelRecord(@Headers('user-token') token: string, @Body() request: FuelRecordRequest) {
       const user = await this.userService.findUserbyToken(token);
       return await this.fuelService.saveFuel(user, request);
     }
 
     @Get('/fuels')
-    async findFuelRecords(@Headers('user_token') token: string) {
+    async findFuelRecords(@Headers('user-token') token: string) {
       const user = await this.userService.findUserbyToken(token);
       return await this.fuelService.findAllFuel(user, {});
     }
     
 
     @Get('/fuels/:id')
-    async fndFuelRecord(@Headers('user_token') token: string, @Param('id') id: number) {
+    async fndFuelRecord(@Headers('user-token') token: string, @Param('id') id: number) {
       const user = await this.userService.findUserbyToken(token);
       return await this.fuelService.findFuelById(user, id);
     }
 
     @Put("/fuels/:id")
-    async updateFuelRecord(@Headers('user_token') token: string, @Param('id') id: number, @Body() request: FuelRecordRequest) {
+    async updateFuelRecord(@Headers('user-token') token: string, @Param('id') id: number, @Body() request: FuelRecordRequest) {
       const user = await this.userService.findUserbyToken(token);
       
     }
 
     @Delete("/fuels/:id")
-    async deleteFuelRecord(@Headers('user_token') token: string, @Param('id') id: number) {
+    async deleteFuelRecord(@Headers('user-token') token: string, @Param('id') id: number) {
       const user = await this.userService.findUserbyToken(token);
       await this.fuelService.deleteFuelById(user, id);
     }
