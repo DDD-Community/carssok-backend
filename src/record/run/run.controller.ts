@@ -46,6 +46,6 @@ export class RunController {
     async deleteRun(@Headers('user-token') token: string, @Param('id') id: number) {
       const user = await this.userService.findUserbyToken(token);
       const result = await this.runService.deleteRun(user, id);
-      return result.generatedMaps;
+      return result;
     }
-}
+}  

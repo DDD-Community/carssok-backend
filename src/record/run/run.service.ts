@@ -48,4 +48,5 @@ export class RunService {
     async deleteRun(user: User, id: number) {
         const result = await this.runRepository.softDelete({id: id, user: user})
         return result.generatedMaps
+    }
 }
