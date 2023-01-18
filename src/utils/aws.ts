@@ -2,8 +2,8 @@ import * as AWS from '@aws-sdk/client-s3';
 import * as AWSSDK from 'aws-sdk';
 AWSSDK.config.update({
   credentials: {
-    accessKeyId: 'AKIA4DFKNUHRJPPXTAEV',
-    secretAccessKey: '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',
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   },
 });
 export const s3Client = new AWS.S3({
