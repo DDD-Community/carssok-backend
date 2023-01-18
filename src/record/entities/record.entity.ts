@@ -1,26 +1,32 @@
-import { Column, CreateDateColumn, OneToMany, PrimaryColumn, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Image } from 'src/image/entities/image.entity';
+import {
+  Column,
+  CreateDateColumn,
+  OneToMany,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 export abstract class Record {
-    @PrimaryGeneratedColumn()
-    id: number
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    recordType: string
+  @Column()
+  recordType: string;
 
-    @Column()
-    isDeleteAt: boolean
+  @Column()
+  isDeleteAt: boolean;
 
-    @Column()
-    eventedAt: Date
+  @Column()
+  eventedAt: Date;
 
-    @Column()
-    memo: string
-    
-    @CreateDateColumn()
-    createdAt: Date 
+  @Column()
+  memo: string;
 
-    @UpdateDateColumn()
-    updateAt: Date
+  @CreateDateColumn()
+  createdAt: Date;
 
-
+  @UpdateDateColumn()
+  updateAt: Date;
 }
