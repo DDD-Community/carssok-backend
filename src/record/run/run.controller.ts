@@ -17,7 +17,6 @@ export class RunController {
    
     @Post('/runs')
     async saveRunRecord(@Headers('user-token') token:string, @Body()response: RunRecordRequest){
-        console.log(token)
         const user = await this.userService.findUserbyToken(token);
         return await this.runService.saveRun(response, user);
     }
