@@ -6,7 +6,7 @@ import { FuelRecordRequest } from '../dto/fuel-record-request';
 import { FuelRecordListResponse } from '../dto/fuel-list-record-response';
 import { Fuel } from '../entities/fuel.entity';
 import { FuelRecordResponse } from '../dto/fuel-record-response';
-import { RecordFilter } from '../dto/record-filter';
+import { RecordFilter } from '../dto/filter/record-filter';
 
 @Injectable()
 export class FuelService {

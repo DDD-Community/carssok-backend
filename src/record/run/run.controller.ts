@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Inject, Post, Headers, UseGuards, Put, Param, Delete, Query } from '@nestjs/common';
 import { SimpleAuthGuard } from 'src/simple-auth/simple-auth.guard';
 import { UserService } from 'src/user/user.service';
-import { RecordFilter } from '../dto/record-filter';
+import { RecordFilter } from '../dto/filter/record-filter';
 import { RunRecordRequest } from '../dto/run-record-request';
 import { RunService } from './run.service';
 

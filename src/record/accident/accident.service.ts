@@ -5,7 +5,7 @@ import { Between, Repository } from 'typeorm';
 import { AccidentListResponse } from '../dto/accident-list-record-response';
 import { AccidentRecordRequest } from '../dto/accident-record-request';
 import { AccidentRecordResponse } from '../dto/accident-record-response';
-import { RecordFilter } from '../dto/record-filter';
+import { RecordFilter } from '../dto/filter/record-filter';
 import { Accident } from '../entities/accident.entity';
 
 @Injectable()

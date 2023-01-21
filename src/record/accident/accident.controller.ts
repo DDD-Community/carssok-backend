@@ -3,7 +3,7 @@ import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { SimpleAuthGuard } from 'src/simple-auth/simple-auth.guard';
 import { UserService } from 'src/user/user.service';
 import { AccidentRecordRequest } from '../dto/accident-record-request';
-import { RecordFilter } from '../dto/record-filter';
+import { RecordFilter } from '../dto/filter/record-filter';
 import { AccidentService } from './accident.service';
 
 @Controller('record')

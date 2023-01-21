@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { Repository, Between } from 'typeorm';
-import { RecordFilter } from '../dto/record-filter';
+import { RecordFilter } from '../dto/filter/record-filter';
 import { RunRecordRequest } from '../dto/run-record-request';
 import { RunRecordResponse } from '../dto/run-record-response';
 import { Run } from '../entities/run.entity';

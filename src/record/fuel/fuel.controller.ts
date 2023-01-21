@@ -2,7 +2,7 @@ import { Body, Controller, Inject, Param, Headers, Post, Delete, Get, Put, UseGu
 import { SimpleAuthGuard } from 'src/simple-auth/simple-auth.guard';
 import { UserService } from 'src/user/user.service';
 import { FuelRecordRequest } from '../dto/fuel-record-request';
-import { RecordFilter } from '../dto/record-filter';
+import { RecordFilter } from '../dto/filter/record-filter';
 import { FuelService } from './fuel.service';
 
 @Controller('record')
