@@ -21,9 +21,9 @@ export class AccidentService {
         // })
     }
 
-    async findAllAccident(user: User, filter: RecordFilter): Promise<AccidentListResponse[]> {
-        const start: Date = filter.date
-        const end: Date = filter.date
+    async findAllAccident(user: User, filter: RecordFilter): Promise<AccidentListResponse[]> { //TODO - Filter Interceptor Transform 추가
+        const start: Date = new Date(filter.date)
+        const end: Date = new Date(filter.date)
         end.setMonth(1); //TODO JS-Date Library 검토
         const accidents = await this.accidentRepository.find({
             where: {

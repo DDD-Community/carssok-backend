@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { Repository, Between } from 'typeorm';
+import { RecordFilter } from '../dto/record-filter';
 import { RunRecordRequest } from '../dto/run-record-request';
 import { RunRecordResponse } from '../dto/run-record-response';
 import { Run } from '../entities/run.entity';
@@ -26,9 +27,9 @@ export class RunService {
         return result
     }
 
-    async findAllRun(user: User, filter: any){
-        const start: Date = filter.date
-        const end: Date = filter.date
+    async findAllRun(user: User, filter: RecordFilter) { //TODO - Filter Interceptor Transform 추가
+        const start: Date = new Date(filter.date)
+        const end: Date = new Date(filter.date)
         end.setMonth(1); //TODO JS-Date Library 검토
         const runs = await this.runRepository.find({
             where: {

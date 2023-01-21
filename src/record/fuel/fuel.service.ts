@@ -25,9 +25,9 @@ export class FuelService {
         return { id: result.identifiers[0].id }
     }
 
-    async findAllFuel(user: User, filter: RecordFilter) {
-        const start: Date = filter.date
-        const end: Date = filter.date
+    async findAllFuel(user: User, filter: RecordFilter) { //TODO - Filter Interceptor Transform 추가
+        const start: Date = new Date(filter.date)
+        const end: Date = new Date(filter.date)
         end.setMonth(1); //TODO JS-Date Library 검토
         const fuels = await this.fuelRepository.find({
             where: {
