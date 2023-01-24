@@ -10,41 +10,52 @@ import { Accident } from '../entities/accident.entity';
 
 @Injectable()
 export class AccidentService {
+  @InjectRepository(Accident)
+  private readonly accidentRepository: Repository<Accident>;
 
-    @InjectRepository(Accident)
-    private readonly accidentRepository: Repository<Accident>
+  async saveAccident(
+    user: User,
+    request: AccidentRecordRequest,
+    files: Express.Multer.File[],
+  ) {
+    console.log(files, request);
+    // const result = await this.accidentRepository.insert({
+    //     user: user
+    // })
+  }
 
-    async saveAccident(user: User, request: AccidentRecordRequest, files: Express.Multer.File[]) {
-        console.log(files, request)
-        // const result = await this.accidentRepository.insert({
-        //     user: user
-        // })
-    }
+  async findAllAccident(
+    user: User,
+    filter: RecordFilter,
+  ): Promise<AccidentListResponse[]> {
+    //TODO - Filter Interceptor Transform 추가
+    const start: Date = new Date(filter.date);
+    const end: Date = new Date(filter.date);
+    end.setMonth(1); //TODO JS-Date Library 검토
+    const accidents = await this.accidentRepository.find({
+      where: {
+        user: user,
+        ...(filter.date && { eventedAt: Between(start, end) }),
+      },
+    });
+    return accidents.map((it) => new AccidentListResponse(it));
+  }
 
-    async findAllAccident(user: User, filter: RecordFilter): Promise<AccidentListResponse[]> { //TODO - Filter Interceptor Transform 추가
-        const start: Date = new Date(filter.date)
-        const end: Date = new Date(filter.date)
-        end.setMonth(1); //TODO JS-Date Library 검토
-        const accidents = await this.accidentRepository.find({
-            where: {
-                user: user,
-                ...( filter.date && { eventedAt: Between(start, end) } )
-            }
-        })
-        return accidents.map(it => new AccidentListResponse(it));
-    }
+  async findAccidnetByid(user: User, id: number) {
+    const accident = await this.accidentRepository.findOneBy({
+      user: user,
+      id: id,
+    });
+    return new AccidentRecordResponse(accident);
+  }
 
-    async findAccidnetByid(user: User, id: number) {
-        const accident = await this.accidentRepository.findOneBy({user: user, id: id})
-        return new AccidentRecordResponse(accident);
-    }
+  async updateAccidentById(user: User, id: number, request) {}
 
-    async updateAccidentById(user: User, id: number, request) {
-
-    }
-
-    async deleteAccidentById(user: User, id: number) {
-        const result = await this.accidentRepository.softDelete({id: id, user: user})
-        return result.generatedMaps
-    }
+  async deleteAccidentById(user: User, id: number) {
+    const result = await this.accidentRepository.softDelete({
+      id: id,
+      user: user,
+    });
+    return result.generatedMaps;
+  }
 }

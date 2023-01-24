@@ -1,4 +1,9 @@
-import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { HelloController } from './hello/hello.controller';
@@ -15,15 +20,22 @@ import { Run } from './record/entities/run.entity';
 import { Maintenance } from './record/entities/maintenance.entity';
 import { Fuel } from './record/entities/fuel.entity';
 import { FuelController } from './record/fuel/fuel.controller';
+
+import { CarModule } from './car/car.module';
+import { Brand } from './crawler/entities/brand.entity';
+import { Car } from './car/entities/car.entity';
+import { Model } from './crawler/entities/model.entity';
+import { Detail } from './crawler/entities/detail.entity';
+import { CrawlerModule } from './crawler/crawler.module';
+import { ImageModule } from './image/image.module';
+import { Image } from './image/entities/image.entity';
+
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseInterceptor } from './common/response.interceptor';
-
-type envType = 'production' | 'test' | 'development';
-const env: envType = (process.env.NODE_ENV || 'development') as envType;
-
+export const __DEV__ = process.env.NODE_ENV === 'development';
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.MYSQL_HOST,
@@ -31,17 +43,37 @@ const env: envType = (process.env.NODE_ENV || 'development') as envType;
       username: process.env.MYSQL_USERNAME,
       password: process.env.MYSQL_PASSWORD,
       database: process.env.MYSQL_DATABASE,
-      entities: [User, UserCar, Device, Accident, Fuel, Run, Maintenance],
+      entities: [
+        User,
+        UserCar,
+        Device,
+        Accident,
+        Fuel,
+        Run,
+        Maintenance,
+        Brand,
+        Car,
+        Model,
+        Detail,
+        Image,
+      ],
       synchronize: true,
-      logging: ['query', 'warn', 'error'],
+      logging: true,
+      // logging: ['query', 'warn', 'error'],
     }),
     ConfigModule,
     UserModule,
     SimpleAuthModule,
     RecordModule,
+    CarModule,
+    CrawlerModule,
+    ImageModule,
   ],
   controllers: [HelloController, SimpleAuthController, FuelController],
-  providers: [UserModule, RecordModule, {
+  providers: [
+    UserModule,
+    RecordModule,
+    {
       provide: APP_INTERCEPTOR,
       useClass: ResponseInterceptor,
     },
@@ -49,10 +81,12 @@ const env: envType = (process.env.NODE_ENV || 'development') as envType;
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(SimpleAuthMiddleware)
-    .exclude({
-      path: '/auth', method: RequestMethod.POST
-    })
-    .forRoutes('*');
+    consumer
+      .apply(SimpleAuthMiddleware)
+      .exclude({
+        path: '/auth',
+        method: RequestMethod.POST,
+      })
+      .forRoutes('*');
   }
 }
