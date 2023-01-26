@@ -2,8 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Car } from './entities/car.entity';
-import { CreateCarInfoDto } from './dto/createCarInfo.dto';
 import { User } from 'src/user/entities/user.entity';
+import { Brand } from 'src/crawler/entities/brand.entity';
+import { Model } from 'src/crawler/entities/model.entity';
+import { Detail } from 'src/crawler/entities/detail.entity';
 
 @Injectable()
 export class CarService {
@@ -12,22 +14,42 @@ export class CarService {
     private readonly carRepository: Repository<Car>,
   ) {}
 
-  async createCarInfo(detail, user, plateNumber, nickName): Promise<Car> {
+  async createCarInfo(
+    brand: Brand,
+    model: Model,
+    detail: Detail,
+    user: User,
+    nickName,
+  ): Promise<Car> {
     const car = await this.carRepository.save({
+      brand,
+      model,
       detail,
       user,
       nickName,
-      plateNumber,
     });
     return car;
   }
 
-  async uploadCarInfo(carId, updateCarInfoDto) {
-    const updatedCarInfo = await this.carRepository.update(
-      carId,
-      updateCarInfoDto,
-    );
-    return updatedCarInfo;
+  async updateCarInfo(carId, brand: Brand, model: Model, detail: Detail) {
+    const car = await this.carRepository.findOne({
+      where: { id: +carId },
+      relations: ['model', 'detail', 'brand'],
+    });
+    const updatedCar = { ...car, ...{ brand, model, detail } };
+
+    await this.carRepository.save(updatedCar);
+    return updatedCar;
+  }
+
+  async updateNickName(carId, nickName) {
+    const originalNickName = await this.carRepository.findOne({
+      where: { id: +carId },
+    });
+    const updatedNickName = { ...originalNickName, nickName };
+
+    await this.carRepository.save(updatedNickName);
+    return updatedNickName;
   }
 
   async findCarInfo(carId) {
@@ -45,7 +67,7 @@ export class CarService {
   }
 
   async deleteCarInfo(carId) {
-    const deletedCar = await this.carRepository.delete(carId);
+    const deletedCar = await this.carRepository.softDelete(carId);
     return deletedCar.affected ? true : false;
   }
 }

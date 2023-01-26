@@ -2,7 +2,6 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -35,4 +34,7 @@ export class Brand {
 
   @OneToMany(() => Model, (model) => model.brand)
   model: Model[];
+
+  @OneToMany(() => Car, (car) => car.brand)
+  car: Car[];
 }

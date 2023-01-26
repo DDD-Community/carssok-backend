@@ -2,7 +2,6 @@ import { Car } from 'src/car/entities/car.entity';
 import { Accident } from 'src/record/entities/accident.entity';
 import { Fuel } from 'src/record/entities/fuel.entity';
 import { Maintenance } from 'src/record/entities/maintenance.entity';
-import { Record } from 'src/record/entities/record.entity';
 import { Run } from 'src/record/entities/run.entity';
 
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';

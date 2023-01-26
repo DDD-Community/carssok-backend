@@ -4,11 +4,14 @@ import { IsString } from 'class-validator';
 
 export class CreateCarInfoDto {
   @IsString()
-  plateNumber: string;
-
-  @IsString()
   nickName: string;
 
   @IsString()
   detailId: string;
+
+  @IsString()
+  brandId: string;
+
+  @IsString()
+  modelId: string;
 }

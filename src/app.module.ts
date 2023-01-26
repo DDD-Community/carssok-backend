@@ -20,16 +20,13 @@ import { Run } from './record/entities/run.entity';
 import { Maintenance } from './record/entities/maintenance.entity';
 import { Fuel } from './record/entities/fuel.entity';
 import { FuelController } from './record/fuel/fuel.controller';
-
 import { CarModule } from './car/car.module';
 import { Brand } from './crawler/entities/brand.entity';
 import { Car } from './car/entities/car.entity';
 import { Model } from './crawler/entities/model.entity';
 import { Detail } from './crawler/entities/detail.entity';
 import { CrawlerModule } from './crawler/crawler.module';
-import { ImageModule } from './image/image.module';
 import { Image } from './image/entities/image.entity';
-
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseInterceptor } from './common/response.interceptor';
 export const __DEV__ = process.env.NODE_ENV === 'development';
@@ -58,8 +55,7 @@ export const __DEV__ = process.env.NODE_ENV === 'development';
         Image,
       ],
       synchronize: true,
-      logging: true,
-      // logging: ['query', 'warn', 'error'],
+      logging: ['query', 'warn', 'error'],
     }),
     ConfigModule,
     UserModule,
@@ -67,7 +63,6 @@ export const __DEV__ = process.env.NODE_ENV === 'development';
     RecordModule,
     CarModule,
     CrawlerModule,
-    ImageModule,
   ],
   controllers: [HelloController, SimpleAuthController, FuelController],
   providers: [

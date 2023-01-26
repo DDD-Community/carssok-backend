@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { Brand } from './brand.entity';
 import { Detail } from './detail.entity';
+import { Car } from 'src/car/entities/car.entity';
 
 @Entity()
 export class Model {
@@ -35,4 +36,7 @@ export class Model {
 
   @OneToMany(() => Detail, (detail) => detail.model)
   detail: Detail[];
+
+  @OneToMany(() => Car, (car) => car.model)
+  car: Car[];
 }

@@ -4,8 +4,8 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
-  Put,
   Req,
   UploadedFiles,
   UseGuards,
@@ -14,7 +14,6 @@ import {
 import { CarService } from './car.service';
 import { SimpleAuthGuard } from 'src/simple-auth/simple-auth.guard';
 import { FilesInterceptor } from '@nestjs/platform-express';
-import { encryptionUtills } from 'src/utils/encryption';
 import { UpdateCarInfoDto } from './dto/updateCarInfo.dto';
 import { ImageService } from 'src/image/image.service';
 import { CreateCarInfoDto } from './dto/createCarInfo.dto';
@@ -38,33 +37,32 @@ export class CarController {
     @UploadedFiles() files: Express.Multer.File,
     @Req() request,
     @Body() createCarInfoDto: CreateCarInfoDto,
-  ) {
-    const userId = parseInt(
-      await encryptionUtills.decrypt(request.headers['user-token']),
-    );
-
-    const { detailId, plateNumber, nickName } = createCarInfoDto;
-
-    const user = await this.userService.findUserId(userId);
+  ): Promise<Car> {
+    const { detailId, brandId, modelId, nickName } = createCarInfoDto;
+    const userToken = request.headers['user-token'];
+    const user = await this.userService.findUserbyToken(userToken);
+    const brand = await this.crawlerService.findBrand(brandId);
+    const model = await this.crawlerService.findModel(modelId);
     const detail = await this.crawlerService.findDetail(detailId);
 
     const carInfo = await this.carService.createCarInfo(
+      brand,
+      model,
       detail,
       user,
-      plateNumber,
       nickName,
     );
 
     if (files) {
       const images = await this.imageService.uploadImage(files, request);
       const car = await this.carService.findCarInfo(carInfo['id']);
-      return await this.imageService.saveImage(images, car);
-    } else {
-      return carInfo;
+      await this.imageService.saveImage(images, car);
     }
+
+    return carInfo;
   }
 
-  @Put(':id')
+  @Patch(':id')
   @UseInterceptors(FilesInterceptor('files', 1))
   async updateCarInfo(
     @Param('id') carId: string,
@@ -73,33 +71,37 @@ export class CarController {
     @UploadedFiles() files?: Express.Multer.File,
   ) {
     const car = await this.carService.findCarInfo(carId);
-    const { detailId, ...rest } = updateCarInfoDto;
-    let detail;
-    if (detailId) {
-      detail = await this.crawlerService.findDetail(detailId);
-      const updateCarInfoDto = { ...rest, detail };
+    const { detailId, modelId, brandId } = updateCarInfoDto;
 
-      return await this.carService.uploadCarInfo(carId, updateCarInfoDto);
-    }
+    const brand = await this.crawlerService.findBrand(brandId);
+    const model = await this.crawlerService.findModel(modelId);
+    const detail = await this.crawlerService.findDetail(detailId);
     if (files) {
       const images = await this.imageService.uploadImage(files, request);
       await this.imageService.updateImage(images, car);
     }
 
-    return await this.carService.uploadCarInfo(carId, updateCarInfoDto);
+    return await this.carService.updateCarInfo(carId, brand, model, detail);
+  }
+
+  @Patch('nickName/:id')
+  async updateNickName(
+    @Param('id') carId: string,
+    @Body('nickName') nickName: string,
+  ) {
+    console.log(nickName);
+    return await this.carService.updateNickName(carId, nickName);
   }
 
   @Delete(':id')
-  async deleteCarInfo(@Param('id') carId: string) {
+  async deleteCarInfo(@Param('id') carId: string): Promise<boolean> {
     return await this.carService.deleteCarInfo(carId);
   }
 
   @Get()
-  async findCars(@Req() request) {
-    const userId = parseInt(
-      await encryptionUtills.decrypt(request.headers['user-token']),
-    );
-    const user = await this.userService.findUserId(userId);
+  async findCars(@Req() request): Promise<Car[]> {
+    const userToken = request.headers['user-token'];
+    const user = await this.userService.findUserbyToken(userToken);
     return await this.carService.findCarInfos(user);
   }
 

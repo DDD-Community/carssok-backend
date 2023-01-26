@@ -24,7 +24,7 @@ export class CrawlerService {
 
   async findBrand(brandId) {
     return await this.brandRepository.findOne({
-      where: { id: brandId },
+      where: { id: +brandId },
     });
   }
 
@@ -36,6 +36,13 @@ export class CrawlerService {
       .getMany();
   }
 
+  async findModel(modelId): Promise<Model> {
+    const model = await this.modelRepository.findOne({
+      where: { id: +modelId },
+    });
+    return model;
+  }
+
   async findDetails(modelId) {
     return await this.modelRepository.findOne({
       where: { id: modelId },
@@ -43,12 +50,10 @@ export class CrawlerService {
     });
   }
 
-  async findDetail(detailId) {
-    return await this.detailRepository
-      .createQueryBuilder('detail')
-      .leftJoinAndSelect('detail.model', 'model')
-      .leftJoinAndSelect('model.brand', 'brand')
-      .where('detail.id = :id', { id: detailId })
-      .getOne();
+  async findDetail(detailId): Promise<Detail> {
+    const detail = await this.detailRepository.findOne({
+      where: { id: +detailId },
+    });
+    return detail;
   }
 }
