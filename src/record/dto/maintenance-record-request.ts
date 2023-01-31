@@ -5,7 +5,7 @@ export class MaintenanceRecordRequest {
     public eventDate: Date
     public location: string
     public memo: string
-    public parts: MaintenacnePartRequest[]
+    public parts: any
 }
 
 export class MaintenacnePartRequest {

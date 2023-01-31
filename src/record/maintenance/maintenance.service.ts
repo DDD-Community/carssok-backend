@@ -22,12 +22,11 @@ export class MaintenanceService {
             part.title = it.name;
             return part;
         })
-        console.log(parts)
-        // const result = await this.maintenanceRepository.insert({
-        //     eventedAt: request.eventDate, location: request.location, memo: request.memo, 
-        //     user: user, // maintenancePart: parts
-        // })
-        // return result.identifiers[0].id
+        const result = await this.maintenanceRepository.insert({
+            eventedAt: request.eventDate, location: request.location, memo: request.memo, 
+            user: user, maintenancePart: parts
+        })
+        return result.identifiers[0].id
     }
 
     async findAllMaintenance(user: User, filter: RecordFilter) { //TODO - Filter Interceptor Transform 추가
