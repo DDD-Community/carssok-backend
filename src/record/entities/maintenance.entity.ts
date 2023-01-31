@@ -1,4 +1,5 @@
-import { Column, Entity } from "typeorm";
+import { Column, Entity, OneToMany } from "typeorm";
+import { MaintenancePart } from "./maintenacnepart.entity";
 import { Record } from "./record.entity";
 
 @Entity()
@@ -7,10 +8,7 @@ export class Maintenance extends Record {
     @Column()
     location: string
 
-    @Column()
-    parts: string
-
-    @Column()
-    charge: number
+    @OneToMany(() => MaintenancePart, (part) => part.maintenance)
+    maintenancePart: MaintenancePart[]
 
 }

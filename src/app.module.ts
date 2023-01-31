@@ -17,6 +17,7 @@ import { Fuel } from './record/entities/fuel.entity';
 import { FuelController } from './record/fuel/fuel.controller';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseInterceptor } from './common/response.interceptor';
+import { MaintenancePart } from './record/entities/maintenacnepart.entity';
 
 type envType = 'production' | 'test' | 'development';
 const env: envType = (process.env.NODE_ENV || 'development') as envType;
@@ -31,7 +32,7 @@ const env: envType = (process.env.NODE_ENV || 'development') as envType;
       username: process.env.MYSQL_USERNAME,
       password: process.env.MYSQL_PASSWORD,
       database: process.env.MYSQL_DATABASE,
-      entities: [User, UserCar, Device, Accident, Fuel, Run, Maintenance],
+      entities: [User, UserCar, Device, Accident, Fuel, Run, Maintenance, MaintenancePart],
       synchronize: true,
       logging: ['query', 'warn', 'error'],
     }),

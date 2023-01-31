@@ -14,11 +14,14 @@ import { FuelController } from './fuel/fuel.controller';
 import { FuelService } from './fuel/fuel.service';
 import { AccidentController } from './accident/accident.controller';
 import { AccidentService } from './accident/accident.service';
+import { MaintenanceService } from './maintenance/maintenance.service';
+import { MaintenanceController } from './maintenance/maintenance.controller';
+import { MaintenancePart } from './entities/maintenacnepart.entity';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Accident, Fuel, Maintenance, Run, User, Device, UserCar])],
-    controllers: [FuelController, RunController, AccidentController],
-    providers: [UserService, FuelService, RunService, AccidentService],
+    imports: [TypeOrmModule.forFeature([Accident, Fuel, Maintenance, Run, User, Device, UserCar, MaintenancePart])],
+    controllers: [FuelController, RunController, AccidentController, MaintenanceController],
+    providers: [UserService, FuelService, RunService, AccidentService, MaintenanceService],
     exports: [FuelService, RunService],
   })
 export class RecordModule {}
