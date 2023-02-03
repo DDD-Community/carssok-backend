@@ -1,12 +1,15 @@
-import { Column, Entity, OneToMany } from 'typeorm';
+import { Column, Entity, ManyToOne } from 'typeorm';
 import { Record } from './record.entity';
-import { Image } from 'src/image/entities/image.entity';
+import { Car } from 'src/car/entities/car.entity';
 
 @Entity()
 export class Accident extends Record {
   @Column()
   location: string;
 
-  @OneToMany(() => Image, (image) => image.accident)
-  image: Image[];
+  @ManyToOne(() => Car, (car) => car.accident, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  car: Car;
 }

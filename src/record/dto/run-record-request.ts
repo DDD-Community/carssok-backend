@@ -1,4 +1,6 @@
 export class RunRecordRequest {
-    public eventDate: Date
-    public distance: number
+  public memo: string;
+  public eventedAt: Date;
+  public distance: number;
+  public carId: number;
 }

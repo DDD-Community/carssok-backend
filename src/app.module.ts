@@ -10,7 +10,6 @@ import { HelloController } from './hello/hello.controller';
 import { SimpleAuthMiddleware } from './simple-auth/simple-auth.middleware';
 import { Device } from './user/entities/device.entity';
 import { User } from './user/entities/user.entity';
-import { UserCar } from './user/entities/user_car.entity';
 import { UserModule } from './user/user.module';
 import { SimpleAuthModule } from './simple-auth/simple-auth.module';
 import { SimpleAuthController } from './simple-auth/simple-auth.controller';
@@ -29,9 +28,11 @@ import { CrawlerModule } from './crawler/crawler.module';
 import { Image } from './image/entities/image.entity';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseInterceptor } from './common/response.interceptor';
+import { Record } from './record/entities/record.entity';
 export const __DEV__ = process.env.NODE_ENV === 'development';
 @Module({
   imports: [
+    CarModule,
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
       type: 'mysql',
@@ -42,7 +43,6 @@ export const __DEV__ = process.env.NODE_ENV === 'development';
       database: process.env.MYSQL_DATABASE,
       entities: [
         User,
-        UserCar,
         Device,
         Accident,
         Fuel,
@@ -55,16 +55,15 @@ export const __DEV__ = process.env.NODE_ENV === 'development';
         Image,
       ],
       synchronize: true,
-      logging: ['query', 'warn', 'error'],
+      // logging: ['query', 'warn', 'error'],
     }),
     ConfigModule,
     UserModule,
     SimpleAuthModule,
     RecordModule,
-    CarModule,
     CrawlerModule,
   ],
-  controllers: [HelloController, SimpleAuthController, FuelController],
+
   providers: [
     UserModule,
     RecordModule,

@@ -4,7 +4,6 @@ import { encryptionUtills } from 'src/utils/encryption';
 import { Repository } from 'typeorm';
 import { Device } from './entities/device.entity';
 import { User } from './entities/user.entity';
-import { UserCar } from './entities/user_car.entity';
 
 @Injectable()
 export class UserService {
@@ -12,8 +11,6 @@ export class UserService {
   private readonly userRepository: Repository<User>;
   @InjectRepository(Device)
   private readonly deviceRepository: Repository<Device>;
-  @InjectRepository(UserCar)
-  private readonly userCarRepository: Repository<UserCar>;
 
   async findDeviceId(token: string): Promise<Device> {
     return this.deviceRepository

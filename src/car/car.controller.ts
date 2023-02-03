@@ -3,9 +3,10 @@ import {
   Controller,
   Delete,
   Get,
+  Headers,
   Param,
-  Patch,
   Post,
+  Put,
   Req,
   UploadedFiles,
   UseGuards,
@@ -20,6 +21,7 @@ import { CreateCarInfoDto } from './dto/createCarInfo.dto';
 import { Car } from './entities/car.entity';
 import { UserService } from 'src/user/user.service';
 import { CrawlerService } from 'src/crawler/crawler.service';
+import { RecordType } from 'src/utils/type';
 
 @Controller('car')
 @UseGuards(SimpleAuthGuard)
@@ -34,17 +36,18 @@ export class CarController {
   @Post()
   @UseInterceptors(FilesInterceptor('files', 1))
   async createCarInfo(
-    @UploadedFiles() files: Express.Multer.File,
+    @UploadedFiles() files: Express.Multer.File[],
+    @Headers('user-token') token: string,
     @Req() request,
     @Body() createCarInfoDto: CreateCarInfoDto,
   ): Promise<Car> {
     const { detailId, brandId, modelId, nickName } = createCarInfoDto;
-    const userToken = request.headers['user-token'];
-    const user = await this.userService.findUserbyToken(userToken);
+
+    const user = await this.userService.findUserbyToken(token);
     const brand = await this.crawlerService.findBrand(brandId);
     const model = await this.crawlerService.findModel(modelId);
     const detail = await this.crawlerService.findDetail(detailId);
-
+    const recordType: RecordType = 'car';
     const carInfo = await this.carService.createCarInfo(
       brand,
       model,
@@ -56,19 +59,24 @@ export class CarController {
     if (files) {
       const images = await this.imageService.uploadImage(files, request);
       const car = await this.carService.findCarInfo(carInfo['id']);
-      await this.imageService.saveImage(images, car);
+      await this.imageService.saveImage(
+        images,
+        car['id'],
+        recordType,
+        car['id'],
+      );
     }
 
     return carInfo;
   }
 
-  @Patch(':id')
+  @Put(':id')
   @UseInterceptors(FilesInterceptor('files', 1))
   async updateCarInfo(
-    @Param('id') carId: string,
+    @Param('id') carId: number,
     @Body() updateCarInfoDto: UpdateCarInfoDto,
     @Req() request,
-    @UploadedFiles() files?: Express.Multer.File,
+    @UploadedFiles() files?: Express.Multer.File[],
   ) {
     const car = await this.carService.findCarInfo(carId);
     const { detailId, modelId, brandId } = updateCarInfoDto;
@@ -78,35 +86,33 @@ export class CarController {
     const detail = await this.crawlerService.findDetail(detailId);
     if (files) {
       const images = await this.imageService.uploadImage(files, request);
-      await this.imageService.updateImage(images, car);
+      await this.imageService.updateImage(images, car['id']);
     }
 
     return await this.carService.updateCarInfo(carId, brand, model, detail);
   }
 
-  @Patch('nickName/:id')
+  @Put('nickName/:id')
   async updateNickName(
-    @Param('id') carId: string,
+    @Param('id') carId: number,
     @Body('nickName') nickName: string,
   ) {
-    console.log(nickName);
     return await this.carService.updateNickName(carId, nickName);
   }
 
   @Delete(':id')
-  async deleteCarInfo(@Param('id') carId: string): Promise<boolean> {
+  async deleteCarInfo(@Param('id') carId: number): Promise<boolean> {
     return await this.carService.deleteCarInfo(carId);
   }
 
   @Get()
-  async findCars(@Req() request): Promise<Car[]> {
-    const userToken = request.headers['user-token'];
-    const user = await this.userService.findUserbyToken(userToken);
+  async findCars(@Headers('user-token') token: string): Promise<Car[]> {
+    const user = await this.userService.findUserbyToken(token);
     return await this.carService.findCarInfos(user);
   }
 
   @Get(':id')
-  async findCar(@Param('id') carId: string): Promise<Car> {
+  async findCar(@Param('id') carId: number): Promise<Car> {
     return await this.carService.findCarInfo(carId);
   }
 }

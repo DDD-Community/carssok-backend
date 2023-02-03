@@ -6,15 +6,18 @@ import { PutObjectCommandInput } from '@aws-sdk/client-s3';
 import dayjs from 'dayjs';
 import { s3Client } from 'src/utils/aws';
 import { Car } from 'src/car/entities/car.entity';
+import { RecordType } from 'src/utils/type';
 
 @Injectable()
 export class ImageService {
   constructor(
     @InjectRepository(Image)
     private readonly imageRepository: Repository<Image>,
+    @InjectRepository(Car)
+    private readonly carRepository: Repository<Car>,
   ) {}
 
-  async uploadImage(files: Express.Multer.File, request) {
+  async uploadImage(files: Express.Multer.File[], request) {
     const numOfFiles = request.files.length;
     const keyArr: string[] = [];
     for (let i = 0; i < numOfFiles; i++) {
@@ -50,24 +53,38 @@ export class ImageService {
     return keyArr;
   }
 
-  async saveImage(keyArr: string[], carInfo: Car) {
+  async saveImage(
+    keyArr: string[],
+    pkInfo: number,
+    recordType: RecordType,
+    carId: Car['id'],
+  ) {
+    const car = await this.carRepository.findOne({
+      where: { id: +carId },
+    });
     const result = keyArr.map(async (v) => {
-      const car = await this.imageRepository.save({
+      const image = await this.imageRepository.save({
         image: `https://carssok.s3.ap-northeast-2.amazonaws.com/${v}`,
-        car: carInfo,
+        recordType,
+        pkInfo,
+        car,
       });
-      return car;
+      return image;
     });
     return result;
   }
 
   async updateImage(keyArr: string[], id) {
     const result = keyArr.map(async (v) => {
-      const car = await this.imageRepository.update(
-        { car: id },
-        { image: `https://carssok.s3.ap-northeast-2.amazonaws.com/${v}` },
-      );
-      return car;
+      const originalImage = await this.imageRepository.findOne({
+        where: { id },
+      });
+      const updatedImage = {
+        ...originalImage,
+        image: `https://carssok.s3.ap-northeast-2.amazonaws.com/${v}`,
+      };
+      await this.imageRepository.save(updatedImage);
+      return updatedImage;
     });
     return result;
   }

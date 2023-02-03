@@ -1,3 +1,4 @@
+import { Car } from 'src/car/entities/car.entity';
 import { User } from 'src/user/entities/user.entity';
 import {
   Column,
@@ -14,12 +15,6 @@ export abstract class Record {
   id: number;
 
   @Column()
-  recordType: string;
-
-  @Column()
-  isDeleteAt: boolean;
-
-  @Column()
   eventedAt: Date;
 
   @Column()
@@ -33,11 +28,4 @@ export abstract class Record {
 
   @UpdateDateColumn()
   updateAt: Date;
-
-  @ManyToOne(() => User, { lazy: true })
-  @JoinColumn({
-    name: 'user_id',
-    referencedColumnName: 'user_id',
-  })
-  user: User;
 }

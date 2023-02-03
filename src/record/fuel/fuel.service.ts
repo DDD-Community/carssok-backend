@@ -1,55 +1,63 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/user/entities/user.entity';
 import { Between, Repository } from 'typeorm';
-import { FuelRecordRequest } from '../dto/fuel-record-request';
 import { FuelRecordListResponse } from '../dto/fuel-list-record-response';
 import { Fuel } from '../entities/fuel.entity';
 import { FuelRecordResponse } from '../dto/fuel-record-response';
 import { RecordFilter } from '../dto/filter/record-filter';
+import { Car } from 'src/car/entities/car.entity';
+import { FuelRecordRequest } from '../dto/fuel-record-request';
 
 @Injectable()
 export class FuelService {
+  @InjectRepository(Fuel)
+  private readonly fuelRepository: Repository<Fuel>;
+  @InjectRepository(Car)
+  private readonly carRepository: Repository<Car>;
 
-    @InjectRepository(Fuel)
-    private readonly fuelRepository: Repository<Fuel>
+  async saveFuel(
+    car: Car,
+    eventedAt: Date,
+    rest: Omit<FuelRecordRequest, 'carId' | 'eventedAt'>,
+  ) {
+    const result = await this.fuelRepository.save({ car, eventedAt, ...rest });
+    return result;
+  }
 
-    async saveFuel(user: User, request: FuelRecordRequest) {
-        const result = await this.fuelRepository.insert(
-            {
-                amount: request.amount, fuelType: request.fuelType, location: request.location,
-                charge: request.charge, memo: request.memo, eventedAt: request.eventDate,
-                user: user, price: request.price
-            }
-        );
-        return { id: result.identifiers[0].id }
-    }
+  async findAllFuel(car: Car, filter: RecordFilter) {
+    //TODO - Filter Interceptor Transform 추가
+    const start: Date = new Date(filter.date);
+    const end: Date = new Date(filter.date);
+    end.setMonth(1); //TODO JS-Date Library 검토
 
-    async findAllFuel(user: User, filter: RecordFilter) { //TODO - Filter Interceptor Transform 추가
-        const start: Date = new Date(filter.date)
-        const end: Date = new Date(filter.date)
-        end.setMonth(1); //TODO JS-Date Library 검토
-        const fuels = await this.fuelRepository.find({
-            where: {
-                user: user,
-                ...( filter.date && { eventedAt: Between(start, end) } )
-            }
-        })
-        return fuels.map(it => new FuelRecordListResponse(it))
-    }
+    const fuels = await this.fuelRepository.findBy({
+      car: { id: car.id },
+      ...(filter.date && { eventedAt: Between(start, end) }),
+    });
+    return fuels.map((it) => new FuelRecordListResponse(it));
+  }
 
-    async findFuelById(user: User, id: number) {
-        const fuel = await this.fuelRepository.findOneBy({user: user, id: id})
-        return new FuelRecordResponse(fuel)
-    }
+  async findFuelById(id: number) {
+    const fuel = await this.fuelRepository.findOneBy({
+      id,
+    });
 
-    async updateFuelById(user: User, id: number, request: Request) {
-      
-    }
+    return new FuelRecordResponse(fuel);
+  }
 
-    async deleteFuelById(user: User, id: number) {
-        const result = await this.fuelRepository.softDelete({id: id, user: user})
-        return result.generatedMaps
-    }
+  async updateFuelById(
+    car: Car,
+    id: number,
+    rest: Omit<FuelRecordRequest, 'carId' | 'eventedAt'>,
+  ) {
+    const fuel = await this.fuelRepository.findOneBy({ id });
+    const updatedFuel = { ...fuel, ...rest };
+    await this.fuelRepository.save(updatedFuel);
+    return updatedFuel;
+  }
 
+  async deleteFuelById(id: number) {
+    const result = await this.fuelRepository.softDelete(id);
+    return result.generatedMaps;
+  }
 }

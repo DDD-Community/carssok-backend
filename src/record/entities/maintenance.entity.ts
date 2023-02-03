@@ -1,6 +1,6 @@
-import { Column, Entity, OneToMany } from 'typeorm';
+import { Column, Entity, ManyToOne } from 'typeorm';
 import { Record } from './record.entity';
-import { Image } from 'src/image/entities/image.entity';
+import { Car } from 'src/car/entities/car.entity';
 
 @Entity()
 export class Maintenance extends Record {
@@ -13,6 +13,9 @@ export class Maintenance extends Record {
   @Column()
   charge: number;
 
-  @OneToMany(() => Image, (image) => image.maintenance)
-  image: Image[];
+  @ManyToOne(() => Car, (car) => car.maintenance, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  car: Car;
 }

@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Device } from 'src/user/entities/device.entity';
 import { User } from 'src/user/entities/user.entity';
-import { UserCar } from 'src/user/entities/user_car.entity';
 import { UserService } from 'src/user/user.service';
 import { Accident } from './entities/accident.entity';
 import { Fuel } from './entities/fuel.entity';
@@ -15,6 +14,9 @@ import { FuelService } from './fuel/fuel.service';
 import { AccidentController } from './accident/accident.controller';
 import { AccidentService } from './accident/accident.service';
 import { Image } from 'src/image/entities/image.entity';
+import { ImageService } from 'src/image/image.service';
+import { Car } from 'src/car/entities/car.entity';
+import { CarService } from 'src/car/car.service';
 
 @Module({
   imports: [
@@ -25,12 +27,19 @@ import { Image } from 'src/image/entities/image.entity';
       Run,
       User,
       Device,
-      UserCar,
       Image,
+      Car,
     ]),
   ],
   controllers: [FuelController, RunController, AccidentController],
-  providers: [UserService, FuelService, RunService, AccidentService],
+  providers: [
+    UserService,
+    FuelService,
+    RunService,
+    AccidentService,
+    ImageService,
+    CarService,
+  ],
   exports: [FuelService, RunService],
 })
 export class RecordModule {}

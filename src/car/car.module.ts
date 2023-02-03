@@ -9,10 +9,10 @@ import { Car } from './entities/car.entity';
 import { UserService } from 'src/user/user.service';
 import { User } from 'src/user/entities/user.entity';
 import { Device } from 'src/user/entities/device.entity';
-import { UserCar } from 'src/user/entities/user_car.entity';
 import { ImageService } from 'src/image/image.service';
 import { Image } from 'src/image/entities/image.entity';
 import { CrawlerService } from 'src/crawler/crawler.service';
+import { Record } from 'src/record/entities/record.entity';
 
 @Module({
   imports: [
@@ -23,10 +23,11 @@ import { CrawlerService } from 'src/crawler/crawler.service';
       Car,
       User,
       Device,
-      UserCar,
       Image,
+      Record,
     ]),
   ],
+
   controllers: [CarController],
   providers: [CarService, UserService, ImageService, CrawlerService],
 })
