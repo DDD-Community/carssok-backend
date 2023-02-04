@@ -31,49 +31,49 @@ export class CarService {
     return car;
   }
 
-  async updateCarInfo(
-    carId: number,
-    brand: Brand,
-    model: Model,
-    detail: Detail,
-  ) {
-    const car = await this.carRepository.findOne({
-      where: { id: carId },
-      relations: ['model', 'detail', 'brand'],
-    });
+  async updateCarInfo(car: Car, brand: Brand, model: Model, detail: Detail) {
     const updatedCar = { ...car, ...{ brand, model, detail } };
 
     await this.carRepository.save(updatedCar);
     return updatedCar;
   }
 
-  async updateNickName(carId: number, nickName: string) {
+  async updateNickName(id: number, nickName: string, user: User) {
     const originalNickName = await this.carRepository.findOne({
-      where: { id: carId },
+      where: { id, user },
     });
     const updatedNickName = { ...originalNickName, nickName };
-    console.log(nickName);
+
     await this.carRepository.save(updatedNickName);
     return updatedNickName;
   }
 
-  async findCarInfo(carId: number) {
-    const car = await this.carRepository.findOne({
-      where: { id: carId },
+  async findCarInfo(user: User) {
+    const car = await this.carRepository.findOneBy({
+      user,
     });
     return car;
   }
 
   async findCarInfos(user: User) {
-    console.log(user);
     const cars = await this.carRepository.find({
       where: { user },
     });
     return cars;
   }
 
-  async deleteCarInfo(carId: number) {
-    const deletedCar = await this.carRepository.softDelete(carId);
+  async findCarInfoById(id: number, user: User) {
+    return await this.carRepository.findOneBy({
+      user,
+      id,
+    });
+  }
+
+  async deleteCarInfo(id: number, user: User) {
+    const car = await this.carRepository.findOne({
+      where: { id, user },
+    });
+    const deletedCar = await this.carRepository.softDelete(car);
     return deletedCar.affected ? true : false;
   }
 }

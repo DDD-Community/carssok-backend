@@ -13,7 +13,7 @@ export class RunService {
   private readonly runRepository: Repository<Run>;
 
   async saveRun(
-    rest: Omit<RunRecordRequest, 'carId' | 'eventedAt'>,
+    rest: Omit<RunRecordRequest, 'eventedAt'>,
     car: Car,
     eventedAt: Date,
   ) {
@@ -41,21 +41,27 @@ export class RunService {
     const end: Date = new Date(filter.date);
     end.setMonth(1); //TODO JS-Date Library 검토
     const runs = await this.runRepository.findBy({
-      car,
+      car: { id: car['id'] },
       ...(filter.date && { eventedAt: Between(start, end) }),
     });
     return runs.map((it) => new RunRecordResponse(it));
   }
 
-  async updateRun(distance: number, id: number) {
-    const run = await this.runRepository.findOneBy({ id: id });
+  async updateRun(distance: number, id: number, car: Car) {
+    const run = await this.runRepository.findOneBy({
+      id,
+      car: { id: car['id'] },
+    });
     const updatedRunRecord = { ...run, distance };
 
     return await this.runRepository.save(updatedRunRecord);
   }
 
   async deleteRun(car: Car, id: number) {
-    const result = await this.runRepository.softDelete({ id: id, car });
+    const record = await this.runRepository.findOne({
+      where: { id, car: { id: car['id'] } },
+    });
+    const result = await this.runRepository.softDelete(record);
     return result.generatedMaps;
   }
 }

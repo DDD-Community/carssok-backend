@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Headers,
+  Inject,
   Param,
   Post,
   Put,
@@ -26,12 +27,14 @@ import { RecordType } from 'src/utils/type';
 @Controller('car')
 @UseGuards(SimpleAuthGuard)
 export class CarController {
-  constructor(
-    private readonly carService: CarService,
-    private readonly imageService: ImageService,
-    private readonly userService: UserService,
-    private readonly crawlerService: CrawlerService,
-  ) {}
+  @Inject()
+  private readonly carService: CarService;
+  @Inject()
+  private readonly imageService: ImageService;
+  @Inject()
+  private readonly userService: UserService;
+  @Inject()
+  private readonly crawlerService: CrawlerService;
 
   @Post()
   @UseInterceptors(FilesInterceptor('files', 1))
@@ -58,7 +61,7 @@ export class CarController {
 
     if (files) {
       const images = await this.imageService.uploadImage(files, request);
-      const car = await this.carService.findCarInfo(carInfo['id']);
+      const car = await this.carService.findCarInfoById(carInfo['id'], user);
       await this.imageService.saveImage(
         images,
         car['id'],
@@ -73,12 +76,14 @@ export class CarController {
   @Put(':id')
   @UseInterceptors(FilesInterceptor('files', 1))
   async updateCarInfo(
-    @Param('id') carId: number,
+    @Headers('user-token') token: string,
+    @Param('id') id: number,
     @Body() updateCarInfoDto: UpdateCarInfoDto,
     @Req() request,
     @UploadedFiles() files?: Express.Multer.File[],
   ) {
-    const car = await this.carService.findCarInfo(carId);
+    const user = await this.userService.findUserbyToken(token);
+    const car = await this.carService.findCarInfoById(id, user);
     const { detailId, modelId, brandId } = updateCarInfoDto;
 
     const brand = await this.crawlerService.findBrand(brandId);
@@ -89,20 +94,26 @@ export class CarController {
       await this.imageService.updateImage(images, car['id']);
     }
 
-    return await this.carService.updateCarInfo(carId, brand, model, detail);
+    return await this.carService.updateCarInfo(car, brand, model, detail);
   }
 
   @Put('nickName/:id')
   async updateNickName(
-    @Param('id') carId: number,
+    @Param('id') id: number,
+    @Headers('user-token') token: string,
     @Body('nickName') nickName: string,
   ) {
-    return await this.carService.updateNickName(carId, nickName);
+    const user = await this.userService.findUserbyToken(token);
+    return await this.carService.updateNickName(id, nickName, user);
   }
 
   @Delete(':id')
-  async deleteCarInfo(@Param('id') carId: number): Promise<boolean> {
-    return await this.carService.deleteCarInfo(carId);
+  async deleteCarInfo(
+    @Param('id') id: number,
+    @Headers('user-token') token: string,
+  ): Promise<boolean> {
+    const user = await this.userService.findUserbyToken(token);
+    return await this.carService.deleteCarInfo(id, user);
   }
 
   @Get()
@@ -111,8 +122,12 @@ export class CarController {
     return await this.carService.findCarInfos(user);
   }
 
-  @Get(':id')
-  async findCar(@Param('id') carId: number): Promise<Car> {
-    return await this.carService.findCarInfo(carId);
+  @Get('/:id')
+  async findCar(
+    @Headers('user-token') token: string,
+    @Param('id') id: number,
+  ): Promise<Car> {
+    const user = await this.userService.findUserbyToken(token);
+    return await this.carService.findCarInfoById(id, user);
   }
 }

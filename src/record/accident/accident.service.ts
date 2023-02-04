@@ -16,7 +16,7 @@ export class AccidentService {
   async saveAccident(
     car: Car,
     eventedAt: Date,
-    rest: Omit<AccidentRecordRequest, 'carId' | 'eventedAt'>,
+    rest: Omit<AccidentRecordRequest, 'eventedAt'>,
   ) {
     const result = await this.accidentRepository.save({
       ...rest,
@@ -35,30 +35,39 @@ export class AccidentService {
     const end: Date = new Date(filter.date);
     end.setMonth(1); //TODO JS-Date Library 검토
     const accidents = await this.accidentRepository.findBy({
-      car,
+      car: { id: car['id'] },
       ...(filter.date && { eventedAt: Between(start, end) }),
     });
     return accidents.map((it) => new AccidentListResponse(it));
   }
 
-  async findAccidnetByid(id: number) {
+  async findAccidnetByid(id: number, car: Car) {
     const accident = await this.accidentRepository.findOneBy({
       id,
+      car: { id: car['id'] },
     });
     return new AccidentRecordResponse(accident);
   }
 
   async updateAccidentById(
     id: number,
-    rest: Omit<AccidentRecordRequest, 'carId' | 'eventedAt'>,
+    rest: Omit<AccidentRecordRequest, 'eventedAt'>,
+    eventedAt: Date,
+    car: Car,
   ) {
-    const accident = await this.accidentRepository.findOneBy({ id });
-    const updatedAccidentRecord = { ...accident, ...rest };
+    const accident = await this.accidentRepository.findOneBy({
+      id,
+      car: { id: car['id'] },
+    });
+    const updatedAccidentRecord = { ...accident, ...rest, eventedAt };
     await this.accidentRepository.save(updatedAccidentRecord);
     return updatedAccidentRecord;
   }
 
-  async deleteAccidentById(id: number) {
+  async deleteAccidentById(id: number, car: Car) {
+    const record = await this.accidentRepository.findOne({
+      where: { car: { id: car['id'] }, id },
+    });
     const result = await this.accidentRepository.softDelete(id);
     return result.generatedMaps;
   }

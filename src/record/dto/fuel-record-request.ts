@@ -1,5 +1,3 @@
-import { Type } from 'class-transformer';
-import { ValidateNested } from 'class-validator';
 import { FuelType } from 'src/utils/type';
 
 export class FuelRecordRequest {
@@ -11,5 +9,4 @@ export class FuelRecordRequest {
   public charge: number;
   public memo: string;
   public location: string;
-  public carId: number;
 }

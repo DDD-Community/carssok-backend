@@ -18,7 +18,7 @@ export class FuelService {
   async saveFuel(
     car: Car,
     eventedAt: Date,
-    rest: Omit<FuelRecordRequest, 'carId' | 'eventedAt'>,
+    rest: Omit<FuelRecordRequest, 'eventedAt'>,
   ) {
     const result = await this.fuelRepository.save({ car, eventedAt, ...rest });
     return result;
@@ -37,9 +37,10 @@ export class FuelService {
     return fuels.map((it) => new FuelRecordListResponse(it));
   }
 
-  async findFuelById(id: number) {
+  async findFuelById(id: number, car: Car) {
     const fuel = await this.fuelRepository.findOneBy({
       id,
+      car: { id: car['id'] },
     });
 
     return new FuelRecordResponse(fuel);
@@ -48,16 +49,22 @@ export class FuelService {
   async updateFuelById(
     car: Car,
     id: number,
-    rest: Omit<FuelRecordRequest, 'carId' | 'eventedAt'>,
+    rest: Omit<FuelRecordRequest, 'eventedAt'>,
+    eventedAt,
   ) {
-    const fuel = await this.fuelRepository.findOneBy({ id });
-    const updatedFuel = { ...fuel, ...rest };
+    const fuel = await this.fuelRepository.findOne({
+      where: { id, car: { id: car['id'] } },
+    });
+    const updatedFuel = { ...fuel, ...rest, eventedAt };
     await this.fuelRepository.save(updatedFuel);
     return updatedFuel;
   }
 
-  async deleteFuelById(id: number) {
-    const result = await this.fuelRepository.softDelete(id);
+  async deleteFuelById(id: number, car: Car) {
+    const record = await this.fuelRepository.findOne({
+      where: { car: { id: car['id'] }, id },
+    });
+    const result = await this.fuelRepository.softDelete(record);
     return result.generatedMaps;
   }
 }

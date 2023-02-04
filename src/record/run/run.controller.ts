@@ -9,6 +9,7 @@ import {
   Param,
   Delete,
   Query,
+  Headers,
 } from '@nestjs/common';
 import { SimpleAuthGuard } from 'src/simple-auth/simple-auth.guard';
 import { UserService } from 'src/user/user.service';
@@ -28,40 +29,53 @@ export class RunController {
   private readonly carService: CarService;
 
   @Post('/runs')
-  async saveRunRecord(@Body() request: RunRecordRequest) {
-    const { carId, eventedAt, ...rest } = request;
-    const car = await this.carService.findCarInfo(carId);
+  async saveRunRecord(
+    @Body() request: RunRecordRequest,
+    @Headers('user-token') token: string,
+  ) {
+    const { eventedAt, ...rest } = request;
+    const user = await this.userService.findUserbyToken(token);
+    const car = await this.carService.findCarInfo(user);
     return await this.runService.saveRun(rest, car, new Date(eventedAt));
   }
 
   @Get('/runs/total-distance')
-  async findUserTotalDistance(@Body('carId') carId: number) {
-    const car = await this.carService.findCarInfo(carId);
+  async findUserTotalDistance(@Headers('user-token') token: string) {
+    const user = await this.userService.findUserbyToken(token);
+    const car = await this.carService.findCarInfo(user);
     const result = await this.runService.findAccumulateDistance(car);
     return result;
   }
 
   @Get('/runs')
   async findMyRuns(
-    @Body('carId') carId: number,
+    @Headers('user-token') token: string,
     @Query() filter: RecordFilter,
   ) {
-    const car = await this.carService.findCarInfo(carId);
+    const user = await this.userService.findUserbyToken(token);
+    const car = await this.carService.findCarInfo(user);
     return await this.runService.findAllRun(car, filter);
   }
 
   @Put('/runs/:id')
   async updateRunDistance(
     @Body('distance') distance: number,
+    @Headers('user-token') token: string,
     @Param('id') id: number,
   ) {
-    const result = await this.runService.updateRun(distance, id);
+    const user = await this.userService.findUserbyToken(token);
+    const car = await this.carService.findCarInfo(user);
+    const result = await this.runService.updateRun(distance, id, car);
     return result.id;
   }
 
   @Delete('/runs/:id')
-  async deleteRun(@Body('carId') carId: number, @Param('id') id: number) {
-    const car = await this.carService.findCarInfo(carId);
+  async deleteRun(
+    @Headers('user-token') token: string,
+    @Param('id') id: number,
+  ) {
+    const user = await this.userService.findUserbyToken(token);
+    const car = await this.carService.findCarInfo(user);
     const result = await this.runService.deleteRun(car, id);
     return result;
   }

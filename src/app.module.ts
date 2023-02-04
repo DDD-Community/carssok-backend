@@ -6,19 +6,16 @@ import {
 } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { HelloController } from './hello/hello.controller';
 import { SimpleAuthMiddleware } from './simple-auth/simple-auth.middleware';
 import { Device } from './user/entities/device.entity';
 import { User } from './user/entities/user.entity';
 import { UserModule } from './user/user.module';
 import { SimpleAuthModule } from './simple-auth/simple-auth.module';
-import { SimpleAuthController } from './simple-auth/simple-auth.controller';
 import { RecordModule } from './record/record.module';
 import { Accident } from './record/entities/accident.entity';
 import { Run } from './record/entities/run.entity';
 import { Maintenance } from './record/entities/maintenance.entity';
 import { Fuel } from './record/entities/fuel.entity';
-import { FuelController } from './record/fuel/fuel.controller';
 import { CarModule } from './car/car.module';
 import { Brand } from './crawler/entities/brand.entity';
 import { Car } from './car/entities/car.entity';
@@ -28,7 +25,6 @@ import { CrawlerModule } from './crawler/crawler.module';
 import { Image } from './image/entities/image.entity';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseInterceptor } from './common/response.interceptor';
-import { Record } from './record/entities/record.entity';
 export const __DEV__ = process.env.NODE_ENV === 'development';
 @Module({
   imports: [
@@ -55,7 +51,7 @@ export const __DEV__ = process.env.NODE_ENV === 'development';
         Image,
       ],
       synchronize: true,
-      // logging: ['query', 'warn', 'error'],
+      logging: ['query', 'warn', 'error'],
     }),
     ConfigModule,
     UserModule,

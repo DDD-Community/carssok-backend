@@ -13,6 +13,7 @@ import {
   UseInterceptors,
   UploadedFiles,
   Req,
+  Headers,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { SimpleAuthGuard } from 'src/simple-auth/simple-auth.guard';
@@ -22,6 +23,7 @@ import { AccidentService } from './accident.service';
 import { ImageService } from 'src/image/image.service';
 import { RecordType } from 'src/utils/type';
 import { CarService } from 'src/car/car.service';
+import { UserService } from 'src/user/user.service';
 
 @Controller('record')
 @UseGuards(SimpleAuthGuard)
@@ -33,16 +35,20 @@ export class AccidentController {
   private readonly imageService: ImageService;
   @Inject()
   private readonly carService: CarService;
+  @Inject()
+  private readonly userService: UserService;
 
   @Post('/accidents')
   @HttpCode(201)
   async saveAccidentRecord(
     @Req() req,
+    @Headers('user-token') token: string,
     @Body() request: AccidentRecordRequest,
     @UploadedFiles() files?: Express.Multer.File[],
   ) {
-    const { carId, eventedAt, ...rest } = request;
-    const car = await this.carService.findCarInfo(carId);
+    const { eventedAt, ...rest } = request;
+    const user = await this.userService.findUserbyToken(token);
+    const car = await this.carService.findCarInfo(user);
     const accident = await this.accidentService.saveAccident(
       car,
       new Date(eventedAt),
@@ -65,45 +71,54 @@ export class AccidentController {
 
   @Get('/accidents')
   async findAccidentRecords(
-    @Body('carId') carId: number,
+    @Headers('user-token') token: string,
     @Query() filter: RecordFilter,
   ) {
-    const car = await this.carService.findCarInfo(carId);
+    const user = await this.userService.findUserbyToken(token);
+    const car = await this.carService.findCarInfo(user);
     return await this.accidentService.findAllAccident(car, filter);
   }
 
   @Get('/accidents/:id')
   async findAccidentRecord(
-    @Body('carId') carId: number,
+    @Headers('user-token') token: string,
     @Param('id') id: number,
   ) {
-    const car = await this.carService.findCarInfo(carId);
-    return await this.accidentService.findAccidnetByid(id);
+    const user = await this.userService.findUserbyToken(token);
+    const car = await this.carService.findCarInfo(user);
+    return await this.accidentService.findAccidnetByid(id, car);
   }
 
   @Put('/accidents/:id')
   async updateAccidentRecord(
     @Param('id') id: number,
+    @Headers('user-token') token: string,
     @Body() request: AccidentRecordRequest,
     @Req() req,
     @UploadedFiles() files?: Express.Multer.File[],
   ) {
-    const { carId, ...rest } = request;
-    // const car = await this.carService.findCarInfo(carId);
-
+    const { eventedAt, ...rest } = request;
+    const user = await this.userService.findUserbyToken(token);
+    const car = await this.carService.findCarInfo(user);
     if (files) {
       const imageUpload = await this.imageService.uploadImage(files, req);
       await this.imageService.updateImage(imageUpload, id);
     }
-    return await this.accidentService.updateAccidentById(id, rest);
+    return await this.accidentService.updateAccidentById(
+      id,
+      rest,
+      new Date(eventedAt),
+      car,
+    );
   }
 
   @Delete('/accidents/:id')
   async deleteAccidentRecord(
-    @Body('carId') carId: number,
+    @Headers('user-token') token: string,
     @Param('id') id: number,
   ) {
-    // const car = await this.carService.findCarInfo(carId);
-    return await this.accidentService.deleteAccidentById(id);
+    const user = await this.userService.findUserbyToken(token);
+    const car = await this.carService.findCarInfo(user);
+    return await this.accidentService.deleteAccidentById(id, car);
   }
 }
