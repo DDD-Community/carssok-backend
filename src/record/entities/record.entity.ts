@@ -1,5 +1,5 @@
 import { User } from "src/user/entities/user.entity";
-import { Column, CreateDateColumn, DeleteDateColumn, JoinColumn, ManyToOne, OneToMany, PrimaryColumn, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 export abstract class Record {
     @PrimaryGeneratedColumn()
@@ -20,7 +20,7 @@ export abstract class Record {
     @DeleteDateColumn()
     deleteAt: Date
 
-    @ManyToOne(() => User, { lazy: true })
+    @ManyToOne(() => User, { cascade: true })
     @JoinColumn({
         name: 'user_id',
         referencedColumnName: 'user_id',

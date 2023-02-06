@@ -1,11 +1,10 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
-import { MaintenacnePartRequest } from "../dto/maintenance-record-request";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 import { Maintenance } from "./maintenance.entity";
 
 @Entity()
 export class MaintenancePart {
 
-    @PrimaryColumn()
+    @PrimaryGeneratedColumn()
     id: number
 
     @Column()

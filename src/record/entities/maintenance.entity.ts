@@ -8,7 +8,7 @@ export class Maintenance extends Record {
     @Column()
     location: string
 
-    @OneToMany(() => MaintenancePart, (part) => part.maintenance)
+    @OneToMany(() => MaintenancePart, (part) => part.maintenance, {cascade: true, onDelete: "CASCADE"})
     maintenancePart: MaintenancePart[]
 
 }
