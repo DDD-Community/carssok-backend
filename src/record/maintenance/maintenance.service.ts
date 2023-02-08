@@ -8,52 +8,68 @@ import { MaintenanceRecordRequest } from '../dto/maintenance-record-request';
 import { MaintenanceRecordResponse } from '../dto/maintenance-record-response';
 import { MaintenancePart } from '../entities/maintenacnepart.entity';
 import { Maintenance } from '../entities/maintenance.entity';
+import { Car } from 'src/car/entities/car.entity';
 
 @Injectable()
 export class MaintenanceService {
+  @InjectRepository(Maintenance)
+  private readonly maintenanceRepository: Repository<Maintenance>;
 
-    @InjectRepository(Maintenance)
-    private readonly maintenanceRepository: Repository<Maintenance>
+  async saveMaintenance(car: Car, request: MaintenanceRecordRequest) {
+    const parts: MaintenancePart[] = request.parts.map((it) => {
+      console.log(it);
+      const part = new MaintenancePart();
+      part.charge = +it.charge;
+      part.title = it.name;
+      return part;
+    });
 
-    async saveMaintenance(user: User, request: MaintenanceRecordRequest, files: Express.Multer.File[]){
-        const parts: MaintenancePart[] = request.parts.map(it => {
-            const part = new MaintenancePart();
-            part.charge = it.charge;
-            part.title = it.name;
-            return part;
-        })
-        const result = await this.maintenanceRepository.insert({
-            eventedAt: request.eventDate, location: request.location, memo: request.memo, 
-            user: user, maintenancePart: parts
-        })
-        return result.identifiers[0].id
-    }
+    const result = await this.maintenanceRepository.save({
+      eventedAt: new Date(request.eventedAt),
+      location: request.location,
+      memo: request.memo,
+      car,
+      maintenancePart: parts,
+    });
+    return result;
+  }
 
-    async findAllMaintenance(user: User, filter: RecordFilter) { //TODO - Filter Interceptor Transform 추가
-        const start: Date = new Date(filter.date)
-        const end: Date = new Date(filter.date)
-        end.setMonth(1); //TODO JS-Date Library 검토
-        const maintenances = await this.maintenanceRepository.find({
-            where: {
-                user: user,
-                ...(filter.date && {eventedAt: Between(start, end)})
-            }
-        })
-        return maintenances.map(it => new MaintenanceListRecordResponse(it))
-    }
- 
-    async findlMaintenanceByid(user: User, id: number) {
-        const maintenance = await this.maintenanceRepository.findOneBy({user: user, id: id})
-        return new MaintenanceRecordResponse(maintenance);
-    }
+  async findAllMaintenance(car: Car, filter: RecordFilter) {
+    //TODO - Filter Interceptor Transform 추가
+    const start: Date = new Date(filter.date);
+    const end: Date = new Date(filter.date);
+    end.setMonth(1); //TODO JS-Date Library 검토
+    const maintenances = await this.maintenanceRepository.find({
+      where: {
+        car,
+        ...(filter.date && { eventedAt: Between(start, end) }),
+      },
+    });
+    return maintenances.map((it) => new MaintenanceListRecordResponse(it));
+  }
 
-    async updateMaintenance(user: User, distance: number, id: number) {
-        const maintenance = await this.maintenanceRepository.findOneBy({user: user, id: id})
-        return await this.maintenanceRepository.save(maintenance);
-    }
+  async findlMaintenanceByid(car: Car, id: number) {
+    const maintenance = await this.maintenanceRepository.findOneBy({
+      car,
+      id: id,
+    });
+    return new MaintenanceRecordResponse(maintenance);
+  }
 
-    async deleteMaintenance(user: User, id: number) {
-        const result = await this.maintenanceRepository.softDelete({id: id, user: user})
-        return result.generatedMaps
-    }
+  async updateMaintenance(car: Car, distance: number, id: number) {
+    const maintenance = await this.maintenanceRepository.findOneBy({
+      car,
+      id: id,
+    });
+    const updatedMaintenanceRecord = { ...maintenance, distance };
+    return await this.maintenanceRepository.save(updatedMaintenanceRecord);
+  }
+
+  async deleteMaintenance(car: Car, id: number) {
+    const result = await this.maintenanceRepository.softDelete({
+      id: id,
+      car,
+    });
+    return result.generatedMaps;
+  }
 }

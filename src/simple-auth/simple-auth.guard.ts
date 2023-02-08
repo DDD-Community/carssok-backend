@@ -27,6 +27,7 @@ export class SimpleAuthGuard implements CanActivate {
     const userId = parseInt(
       await encryptionUtills.decrypt(request.headers['user-token']),
     );
+
     if (Number.isNaN(userId))
       throw new HttpException('존재하지 않는 유저입니다.', 411);
     return await this.userService.isUser(userId);

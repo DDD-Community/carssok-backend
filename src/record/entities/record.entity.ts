@@ -1,31 +1,27 @@
-import { User } from "src/user/entities/user.entity";
-import { Column, CreateDateColumn, DeleteDateColumn, JoinColumn, ManyToOne, OneToMany, PrimaryColumn, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 export abstract class Record {
-    @PrimaryGeneratedColumn()
-    id: number
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    eventedAt: Date
+  @Column()
+  eventedAt: Date;
 
-    @Column()
-    memo: string
-    
-    @CreateDateColumn()
-    createdAt: Date 
+  @Column()
+  memo: string;
 
-    @UpdateDateColumn()
-    updateAt: Date
+  @DeleteDateColumn()
+  deleteAt: Date;
 
-    @DeleteDateColumn()
-    deleteAt: Date
+  @CreateDateColumn()
+  createdAt: Date;
 
-    @ManyToOne(() => User, { lazy: true })
-    @JoinColumn({
-        name: 'user_id',
-        referencedColumnName: 'user_id',
-    })
-    user: User
-
-
+  @UpdateDateColumn()
+  updateAt: Date;
 }
