@@ -25,7 +25,11 @@ import { CrawlerModule } from './crawler/crawler.module';
 import { Image } from './image/entities/image.entity';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseInterceptor } from './common/response.interceptor';
-export const __DEV__ = process.env.NODE_ENV === 'development';
+import { MaintenancePart } from './record/entities/maintenacnepart.entity';
+
+type envType = 'production' | 'test' | 'development';
+const env: envType = (process.env.NODE_ENV || 'development') as envType;
+
 @Module({
   imports: [
     CarModule,
@@ -49,7 +53,9 @@ export const __DEV__ = process.env.NODE_ENV === 'development';
         Model,
         Detail,
         Image,
+        MaintenancePart,
       ],
+
       synchronize: true,
       logging: ['query', 'warn', 'error'],
     }),

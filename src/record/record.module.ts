@@ -17,7 +17,9 @@ import { Image } from 'src/image/entities/image.entity';
 import { ImageService } from 'src/image/image.service';
 import { Car } from 'src/car/entities/car.entity';
 import { CarService } from 'src/car/car.service';
-
+import { MaintenanceService } from './maintenance/maintenance.service';
+import { MaintenanceController } from './maintenance/maintenance.controller';
+import { MaintenancePart } from './entities/maintenacnepart.entity';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -29,9 +31,15 @@ import { CarService } from 'src/car/car.service';
       Device,
       Image,
       Car,
+      MaintenancePart,
     ]),
   ],
-  controllers: [FuelController, RunController, AccidentController],
+  controllers: [
+    FuelController,
+    RunController,
+    AccidentController,
+    MaintenanceController,
+  ],
   providers: [
     UserService,
     FuelService,
@@ -39,6 +47,7 @@ import { CarService } from 'src/car/car.service';
     AccidentService,
     ImageService,
     CarService,
+    MaintenanceService,
   ],
   exports: [FuelService, RunService],
 })
