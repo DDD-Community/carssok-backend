@@ -28,7 +28,12 @@ export class MaintenanceController {
       const user = await this.userService.findUserbyToken(token);
       return await this.maintenanceService.findAllMaintenance(user, filter);
     }
-    
+
+    @Get("/maintenances/parts")
+    async findMaintenanceParts(@Headers('user-token') token: string) {
+      const user = await this.userService.findUserbyToken(token);
+      return await this.maintenanceService.findAllMaintenancePart(user);
+    }
 
     @Get('/maintenances/:id')
     async findMaintenanceRecord(@Headers('user-token') token: string, @Param('id') id: number) {

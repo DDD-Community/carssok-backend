@@ -70,9 +70,31 @@ export class MaintenanceService {
         return result.affected ? true: false;
     }
 
-    //정비 항목 노출 관련한 테이블 필요.
-
-
+    //TODO 정비 항목 노출 관련한 테이블 필요.
     //정비 파츠 관련한 고를 수 있게 하는 항목 필요
+    async findAllMaintenancePart(user: User) {
+        const result = await this.maintenanceRepository.find({
+            where: {user: user},
+            relations: {
+                maintenancePart: true
+            }
+        })
+        const response = []
+        result.map(it => {
+            return {
+                eventDate: it.eventedAt,
+                maintenacePart: it.maintenancePart
+            }
+        }).forEach(e => {
+            if (e.maintenacePart.length > 0) 
+                e.maintenacePart.forEach(it => {
+                    response.push({
+                        id: it.id,
+                        title: `${e.eventDate.getMonth()}월 ${e.eventDate.getDay()}: ${it.title}`, //
+                    })
+                })
+        });//TODO reduce 함수 적용해보기. && 시간함수도 때오기
+        return response;
+    }
 
 }
