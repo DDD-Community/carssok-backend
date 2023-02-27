@@ -4,23 +4,25 @@ import { Maintenance } from "./maintenance.entity";
 @Entity()
 export class MaintenancePart {
 
-    @PrimaryGeneratedColumn()
-    id: number
+  @PrimaryGeneratedColumn()
+  id: number;
+  
+  @Column()
+  title: string;
+  
+  @Column()
+  charge: number;
 
-    @Column()
-    title: string
+  @Column()
+  distanceForBuy: number;
 
-    @Column()
-    charge: number
-
-    @Column()
-    distanceForBuy: number
-
-    @ManyToOne(() => Maintenance)
-    @JoinColumn({
-        name: 'maintence_id',
-        referencedColumnName: 'id'
-    })
-    maintenance: Maintenance;
-    
+  @ManyToOne(() => Maintenance, (maintenance) => maintenance.maintenancePart, {
+    onDelete: 'CASCADE',
+    cascade: true,
+  })
+  @JoinColumn({
+    name: 'maintence_id',
+    referencedColumnName: 'id',
+  })
+  maintenance: Maintenance;
 }

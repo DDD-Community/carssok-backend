@@ -9,12 +9,21 @@ import { MaintenacnePartRequest, MaintenanceRecordRequest } from '../dto/mainten
 import { MaintenanceRecordResponse } from '../dto/maintenance-record-response';
 import { MaintenancePart } from '../entities/maintenacnepart.entity';
 import { Maintenance } from '../entities/maintenance.entity';
+import { Car } from 'src/car/entities/car.entity';
 
 @Injectable()
 export class MaintenanceService {
+  @InjectRepository(Maintenance)
+  private readonly maintenanceRepository: Repository<Maintenance>;
 
-    @InjectRepository(Maintenance)
-    private readonly maintenanceRepository: Repository<Maintenance>
+  async saveMaintenance(car: Car, request: MaintenanceRecordRequest) {
+    const parts: MaintenancePart[] = request.parts.map((it) => {
+      console.log(it);
+      const part = new MaintenancePart();
+      part.charge = +it.charge;
+      part.title = it.name;
+      return part;
+    });
 
     async saveMaintenance(user: User, request: MaintenanceRecordRequest, files: Express.Multer.File[]){
         const parts: MaintenancePart[] = this.toMaintenancePart(request.parts)

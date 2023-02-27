@@ -4,18 +4,13 @@ import { encryptionUtills } from 'src/utils/encryption';
 import { Repository } from 'typeorm';
 import { Device } from './entities/device.entity';
 import { User } from './entities/user.entity';
-import { UserCar } from './entities/user_car.entity';
 
 @Injectable()
 export class UserService {
-  
   @InjectRepository(User)
-  private readonly userRepository: Repository<User>
+  private readonly userRepository: Repository<User>;
   @InjectRepository(Device)
-  private readonly deviceRepository: Repository<Device>
-  @InjectRepository(UserCar)
-  private readonly userCarRepository: Repository<UserCar>
-
+  private readonly deviceRepository: Repository<Device>;
 
   async findDeviceId(token: string): Promise<Device> {
     return this.deviceRepository
@@ -26,15 +21,13 @@ export class UserService {
   }
 
   async findUserbyToken(token: string): Promise<User> {
-    const userId = parseInt(
-      await encryptionUtills.decrypt(token),
-    );
+    const userId = parseInt(await encryptionUtills.decrypt(token));
     return this.findUserId(userId);
   }
 
   async findUserId(id: number): Promise<User> {
     return this.userRepository.findOne({
-      where: {user_id: id}
+      where: { user_id: id },
     });
   }
 
@@ -47,7 +40,9 @@ export class UserService {
   }
 
   async isDevice(id: string): Promise<boolean> {
-    const device = await this.deviceRepository.findOne({ where: { device_token: id } })
+    const device = await this.deviceRepository.findOne({
+      where: { device_token: id },
+    });
     return device != null;
   }
 

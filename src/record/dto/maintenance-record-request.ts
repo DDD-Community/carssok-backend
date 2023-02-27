@@ -1,5 +1,5 @@
-import { ValidateNested } from "class-validator"
-import { MaintenancePart } from "../entities/maintenacnepart.entity"
+import { IsArray, ValidateNested } from 'class-validator';
+import { MaintenancePart } from '../entities/maintenacnepart.entity';
 
 export class MaintenanceRecordRequest {
     public eventDate: Date
@@ -10,8 +10,6 @@ export class MaintenanceRecordRequest {
 }
 
 export class MaintenacnePartRequest {
-
-    public name: string
-    public charge: number
-
+  public name: string;
+  public charge: number;
 }
