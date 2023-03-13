@@ -36,7 +36,15 @@ export class RunController {
     const { eventedAt, ...rest } = request;
     const user = await this.userService.findUserbyToken(token);
     const car = await this.carService.findCarInfo(user);
-    return await this.runService.saveRun(rest, car, new Date(eventedAt));
+    const runRecord = await this.runService.saveRun(
+      rest,
+      car,
+      new Date(eventedAt),
+    );
+    return {
+      id: runRecord.id,
+      status: '저장완료',
+    };
   }
 
   @Get('/runs/total-distance')
@@ -66,7 +74,9 @@ export class RunController {
     const user = await this.userService.findUserbyToken(token);
     const car = await this.carService.findCarInfo(user);
     const result = await this.runService.updateRun(distance, id, car);
-    return result.id;
+    return {
+      status: '수정완료',
+    };
   }
 
   @Delete('/runs/:id')
@@ -77,6 +87,8 @@ export class RunController {
     const user = await this.userService.findUserbyToken(token);
     const car = await this.carService.findCarInfo(user);
     const result = await this.runService.deleteRun(car, id);
-    return result;
+    return {
+      status: '삭제완료',
+    };
   }
 }
