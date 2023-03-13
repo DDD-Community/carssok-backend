@@ -37,7 +37,15 @@ export class FuelController {
     const { eventedAt, ...rest } = request;
     const user = await this.userService.findUserbyToken(token);
     const car = await this.carService.findCarInfo(user);
-    return await this.fuelService.saveFuel(car, new Date(eventedAt), rest);
+    const fuelRecord = await this.fuelService.saveFuel(
+      car,
+      new Date(eventedAt),
+      rest,
+    );
+    return {
+      id: fuelRecord.id,
+      status: '저장완료',
+    };
   }
 
   @Get('/fuels')
@@ -69,12 +77,10 @@ export class FuelController {
     const { eventedAt, ...rest } = request;
     const user = await this.userService.findUserbyToken(token);
     const car = await this.carService.findCarInfo(user);
-    return await this.fuelService.updateFuelById(
-      car,
-      id,
-      rest,
-      new Date(eventedAt),
-    );
+    await this.fuelService.updateFuelById(car, id, rest, new Date(eventedAt));
+    return {
+      status: '수정완료',
+    };
   }
 
   @Delete('/fuels/:id')
@@ -84,6 +90,9 @@ export class FuelController {
   ) {
     const user = await this.userService.findUserbyToken(token);
     const car = await this.carService.findCarInfo(user);
-    return await this.fuelService.deleteFuelById(id, car);
+    await this.fuelService.deleteFuelById(id, car);
+    return {
+      status: '삭제완료',
+    };
   }
 }
