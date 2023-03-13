@@ -88,4 +88,11 @@ export class ImageService {
     });
     return result;
   }
+
+  async getImages(recordType: string, pkInfo: number): Promise<Image[]> {
+    return await this.imageRepository.find({
+      where: { recordType, pkInfo },
+      select: ['image'],
+    });
+  }
 }
