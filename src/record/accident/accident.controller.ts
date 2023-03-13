@@ -24,10 +24,11 @@ import { ImageService } from 'src/image/image.service';
 import { RecordType } from 'src/utils/type';
 import { CarService } from 'src/car/car.service';
 import { UserService } from 'src/user/user.service';
+import { Image } from 'src/image/entities/image.entity';
 
 @Controller('record')
 @UseGuards(SimpleAuthGuard)
-@UseInterceptors(FilesInterceptor('files', 1))
+@UseInterceptors(FilesInterceptor('files', 5))
 export class AccidentController {
   @Inject()
   private readonly accidentService: AccidentService;
@@ -64,9 +65,15 @@ export class AccidentController {
         recordType,
         car['id'],
       );
-      return accident;
+      return {
+        id: accident.id,
+        status: '저장완료',
+      };
     }
-    return accident;
+    return {
+      id: accident.id,
+      status: '저장완료',
+    };
   }
 
   @Get('/accidents')
@@ -76,7 +83,11 @@ export class AccidentController {
   ) {
     const user = await this.userService.findUserbyToken(token);
     const car = await this.carService.findCarInfo(user);
-    return await this.accidentService.findAllAccident(car, filter);
+    const accidentRecord = await this.accidentService.findAllAccident(
+      car,
+      filter,
+    );
+    return accidentRecord;
   }
 
   @Get('/accidents/:id')
@@ -86,7 +97,10 @@ export class AccidentController {
   ) {
     const user = await this.userService.findUserbyToken(token);
     const car = await this.carService.findCarInfo(user);
-    return await this.accidentService.findAccidnetByid(id, car);
+    const accidentRecord = await this.accidentService.findAccidnetByid(id, car);
+    const url = await this.imageService.getImages('accident', id);
+
+    return { ...accidentRecord, url };
   }
 
   @Put('/accidents/:id')
@@ -102,14 +116,18 @@ export class AccidentController {
     const car = await this.carService.findCarInfo(user);
     if (files) {
       const imageUpload = await this.imageService.uploadImage(files, req);
-      await this.imageService.updateImage(imageUpload, id);
+      await this.imageService.updateImage(imageUpload, car['id']);
     }
-    return await this.accidentService.updateAccidentById(
+    await this.accidentService.updateAccidentById(
       id,
       rest,
       new Date(eventedAt),
       car,
     );
+
+    return {
+      status: '수정완료',
+    };
   }
 
   @Delete('/accidents/:id')
@@ -119,6 +137,9 @@ export class AccidentController {
   ) {
     const user = await this.userService.findUserbyToken(token);
     const car = await this.carService.findCarInfo(user);
-    return await this.accidentService.deleteAccidentById(id, car);
+    await this.accidentService.deleteAccidentById(id, car);
+    return {
+      status: '삭제완료',
+    };
   }
 }
