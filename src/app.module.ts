@@ -32,7 +32,6 @@ const env: envType = (process.env.NODE_ENV || 'development') as envType;
 
 @Module({
   imports: [
-    CarModule,
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
       type: 'mysql',
@@ -59,13 +58,13 @@ const env: envType = (process.env.NODE_ENV || 'development') as envType;
       synchronize: true,
       logging: ['query', 'warn', 'error'],
     }),
+    CarModule,
     ConfigModule,
     UserModule,
     SimpleAuthModule,
     RecordModule,
     CrawlerModule,
   ],
-
   providers: [
     UserModule,
     RecordModule,
