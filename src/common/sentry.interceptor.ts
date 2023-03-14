@@ -15,7 +15,7 @@ export class SentryInterceptor implements NestInterceptor {
           attachments: [
             {
               color: 'danger',
-              text: '🚨ah-ha-api-server 버그 발생🚨',
+              text: '🚨카쏙 버그 발생🚨',
               fields: [
                 {
                   title: `Request Message: ${error.message}`,
