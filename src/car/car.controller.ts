@@ -19,7 +19,6 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { UpdateCarInfoDto } from './dto/updateCarInfo.dto';
 import { ImageService } from 'src/image/image.service';
 import { CreateCarInfoDto } from './dto/createCarInfo.dto';
-import { Car } from './entities/car.entity';
 import { UserService } from 'src/user/user.service';
 import { CrawlerService } from 'src/crawler/crawler.service';
 import { RecordType } from 'src/utils/type';
@@ -43,7 +42,7 @@ export class CarController {
     @Headers('user-token') token: string,
     @Req() request,
     @Body() createCarInfoDto: CreateCarInfoDto,
-  ): Promise<Car> {
+  ): Promise<{ id: number; status: string }> {
     const { detailId, brandId, modelId, nickName } = createCarInfoDto;
 
     const user = await this.userService.findUserbyToken(token);
@@ -61,7 +60,9 @@ export class CarController {
 
     if (files) {
       const images = await this.imageService.uploadImage(files, request);
+
       const car = await this.carService.findCarInfoById(carInfo['id'], user);
+      console.log(car);
       await this.imageService.saveImage(
         images,
         car['id'],
@@ -70,7 +71,10 @@ export class CarController {
       );
     }
 
-    return carInfo;
+    return {
+      id: carInfo.id,
+      status: '저장완료',
+    };
   }
 
   @Put(':id')
@@ -81,7 +85,7 @@ export class CarController {
     @Body() updateCarInfoDto: UpdateCarInfoDto,
     @Req() request,
     @UploadedFiles() files?: Express.Multer.File[],
-  ) {
+  ): Promise<{ status: string }> {
     const user = await this.userService.findUserbyToken(token);
     const car = await this.carService.findCarInfoById(id, user);
     const { detailId, modelId, brandId } = updateCarInfoDto;
@@ -94,7 +98,10 @@ export class CarController {
       await this.imageService.updateImage(images, car['id']);
     }
 
-    return await this.carService.updateCarInfo(car, brand, model, detail);
+    await this.carService.updateCarInfo(car, brand, model, detail);
+    return {
+      status: '수정완료',
+    };
   }
 
   @Put('nickName/:id')
@@ -102,32 +109,61 @@ export class CarController {
     @Param('id') id: number,
     @Headers('user-token') token: string,
     @Body('nickName') nickName: string,
-  ) {
+  ): Promise<{ status: string }> {
     const user = await this.userService.findUserbyToken(token);
-    return await this.carService.updateNickName(id, nickName, user);
+    await this.carService.updateNickName(id, nickName, user);
+    return {
+      status: '닉네임 수정완료',
+    };
   }
 
   @Delete(':id')
   async deleteCarInfo(
     @Param('id') id: number,
     @Headers('user-token') token: string,
-  ): Promise<boolean> {
+  ): Promise<{ status: string }> {
     const user = await this.userService.findUserbyToken(token);
-    return await this.carService.deleteCarInfo(id, user);
+    await this.carService.deleteCarInfo(id, user);
+    return {
+      status: '삭제완료',
+    };
   }
 
   @Get()
-  async findCars(@Headers('user-token') token: string): Promise<Car[]> {
+  async findCars(@Headers('user-token') token: string) {
     const user = await this.userService.findUserbyToken(token);
-    return await this.carService.findCarInfos(user);
+    const cars = await this.carService.findCarInfos(user);
+    return cars.map((v) => {
+      return {
+        id: v.id,
+        manufacturer: v.brand.brand ? v.brand.brand : null,
+        model: v.model.title ? v.model.title : null,
+        year: v.detail.year ? v.detail.year : null,
+        fuel: v.detail.fuel ? v.detail.fuel : null,
+        rate: v.detail.rate ? v.detail.rate : null,
+      };
+    });
   }
 
   @Get('/:id')
-  async findCar(
-    @Headers('user-token') token: string,
-    @Param('id') id: number,
-  ): Promise<Car> {
+  async findCar(@Headers('user-token') token: string, @Param('id') id: number) {
     const user = await this.userService.findUserbyToken(token);
-    return await this.carService.findCarInfoById(id, user);
+    const car = await this.carService.findCarInfoById(id, user);
+
+    const carId = car.id;
+    const manufacturer = car.brand.brand;
+    const model = car.model.title;
+    const year = car.detail.year;
+    const fuel = car.detail.fuel;
+    const rate = car.detail.rate;
+
+    return {
+      id: carId ? carId : null,
+      manufacturer: manufacturer ? manufacturer : null,
+      model: model ? model : null,
+      year: year ? year : null,
+      fuel: fuel ? fuel : null,
+      rate: rate ? rate : null,
+    };
   }
 }

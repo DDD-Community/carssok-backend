@@ -49,8 +49,10 @@ export class CarService {
   }
 
   async findCarInfo(user: User) {
-    const car = await this.carRepository.findOneBy({
-      user,
+    const car = await this.carRepository.findOne({
+      where: { user },
+      select: ['brand', 'detail', 'model', 'nickName', 'id'],
+      relations: ['brand', 'model', 'detail'],
     });
     return car;
   }
@@ -58,15 +60,19 @@ export class CarService {
   async findCarInfos(user: User) {
     const cars = await this.carRepository.find({
       where: { user },
+      select: ['brand', 'detail', 'model', 'nickName', 'id'],
+      relations: ['brand', 'model', 'detail'],
     });
     return cars;
   }
 
   async findCarInfoById(id: number, user: User) {
-    return await this.carRepository.findOneBy({
-      user,
-      id,
+    const car = await this.carRepository.findOne({
+      where: { user, id },
+      select: ['brand', 'detail', 'model', 'nickName', 'id'],
+      relations: ['brand', 'model', 'detail'],
     });
+    return car;
   }
 
   async deleteCarInfo(id: number, user: User) {
