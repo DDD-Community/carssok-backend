@@ -18,7 +18,7 @@ export class SimpleAuthController {
 
   @Get()
   async getAuthorization(@Req() request) {
-    const id = request.headers['device_id'];
+    const id = request.headers['device-id'];
     const device: Device = await this.userService.findDeviceId(id);
 
     try {

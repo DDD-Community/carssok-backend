@@ -11,7 +11,7 @@ export class SimpleAuthMiddleware implements NestMiddleware {
   use(req: any, res: any, next: () => void) {
     const headers = req.headers;
     if (
-      !headers.hasOwnProperty('device_id') &&
+      !headers.hasOwnProperty('device-id') &&
       !headers.hasOwnProperty('user-token')
     ) {
       throw new HttpException(
