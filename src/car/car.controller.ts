@@ -23,7 +23,7 @@ import { UserService } from 'src/user/user.service';
 import { CrawlerService } from 'src/crawler/crawler.service';
 import { RecordType } from 'src/utils/type';
 
-@Controller('car')
+@Controller('cars')
 @UseGuards(SimpleAuthGuard)
 export class CarController {
   @Inject()
@@ -34,6 +34,22 @@ export class CarController {
   private readonly userService: UserService;
   @Inject()
   private readonly crawlerService: CrawlerService;
+
+  @Get()
+  async findCars(@Headers('user-token') token: string) {
+    const user = await this.userService.findUserbyToken(token);
+    const cars = await this.carService.findCarInfos(user);
+    return cars.map((v) => {
+      return {
+        id: v.id,
+        manufacturer: v.brand.brand ? v.brand.brand : null,
+        model: v.model.title ? v.model.title : null,
+        year: v.detail.year ? v.detail.year : null,
+        fuel: v.detail.fuel ? v.detail.fuel : null,
+        rate: v.detail.rate ? v.detail.rate : null,
+      };
+    });
+  }
 
   @Post()
   @UseInterceptors(FilesInterceptor('files', 1))
@@ -77,6 +93,28 @@ export class CarController {
     };
   }
 
+  @Get(':id')
+  async findCar(@Headers('user-token') token: string, @Param('id') id: number) {
+    const user = await this.userService.findUserbyToken(token);
+    const car = await this.carService.findCarInfoById(id, user);
+
+    const carId = car.id;
+    const manufacturer = car.brand.brand;
+    const model = car.model.title;
+    const year = car.detail.year;
+    const fuel = car.detail.fuel;
+    const rate = car.detail.rate;
+
+    return {
+      id: carId ? carId : null,
+      manufacturer: manufacturer ? manufacturer : null,
+      model: model ? model : null,
+      year: year ? year : null,
+      fuel: fuel ? fuel : null,
+      rate: rate ? rate : null,
+    };
+  }
+
   @Put(':id')
   @UseInterceptors(FilesInterceptor('files', 1))
   async updateCarInfo(
@@ -104,7 +142,7 @@ export class CarController {
     };
   }
 
-  @Put('nickName/:id')
+  @Put(':id/nickname')
   async updateNickName(
     @Param('id') id: number,
     @Headers('user-token') token: string,
@@ -129,41 +167,4 @@ export class CarController {
     };
   }
 
-  @Get()
-  async findCars(@Headers('user-token') token: string) {
-    const user = await this.userService.findUserbyToken(token);
-    const cars = await this.carService.findCarInfos(user);
-    return cars.map((v) => {
-      return {
-        id: v.id,
-        manufacturer: v.brand.brand ? v.brand.brand : null,
-        model: v.model.title ? v.model.title : null,
-        year: v.detail.year ? v.detail.year : null,
-        fuel: v.detail.fuel ? v.detail.fuel : null,
-        rate: v.detail.rate ? v.detail.rate : null,
-      };
-    });
-  }
-
-  @Get('/:id')
-  async findCar(@Headers('user-token') token: string, @Param('id') id: number) {
-    const user = await this.userService.findUserbyToken(token);
-    const car = await this.carService.findCarInfoById(id, user);
-
-    const carId = car.id;
-    const manufacturer = car.brand.brand;
-    const model = car.model.title;
-    const year = car.detail.year;
-    const fuel = car.detail.fuel;
-    const rate = car.detail.rate;
-
-    return {
-      id: carId ? carId : null,
-      manufacturer: manufacturer ? manufacturer : null,
-      model: model ? model : null,
-      year: year ? year : null,
-      fuel: fuel ? fuel : null,
-      rate: rate ? rate : null,
-    };
-  }
 }
