@@ -1,11 +1,8 @@
-import { Brand } from 'src/crawler/entities/brand.entity';
-import { Detail } from 'src/crawler/entities/detail.entity';
-import { Model } from 'src/crawler/entities/model.entity';
+import { Brand } from 'src/car/entities/brand.entity';
 import { Image } from 'src/image/entities/image.entity';
 import { Accident } from 'src/record/entities/accident.entity';
 import { Fuel } from 'src/record/entities/fuel.entity';
 import { Maintenance } from 'src/record/entities/maintenance.entity';
-import { Record } from 'src/record/entities/record.entity';
 import { Run } from 'src/record/entities/run.entity';
 import { User } from 'src/user/entities/user.entity';
 import {
@@ -18,6 +15,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Detail } from './detail.entity';
+import { Model } from './model.entity';
 
 @Entity()
 export class Car {

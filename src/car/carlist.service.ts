@@ -6,7 +6,7 @@ import { Model } from './entities/model.entity';
 import { Detail } from './entities/detail.entity';
 
 @Injectable()
-export class CrawlerService {
+export class CarListService {
   constructor(
     @InjectRepository(Brand)
     private readonly brandRepository: Repository<Brand>,

@@ -3,9 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Car } from './entities/car.entity';
 import { User } from 'src/user/entities/user.entity';
-import { Brand } from 'src/crawler/entities/brand.entity';
-import { Model } from 'src/crawler/entities/model.entity';
-import { Detail } from 'src/crawler/entities/detail.entity';
+import { Brand } from 'src/car/entities/brand.entity';
+import { Detail } from './entities/detail.entity';
+import { Model } from './entities/model.entity';
 
 @Injectable()
 export class CarService {

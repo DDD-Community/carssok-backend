@@ -17,15 +17,14 @@ import { Run } from './record/entities/run.entity';
 import { Maintenance } from './record/entities/maintenance.entity';
 import { Fuel } from './record/entities/fuel.entity';
 import { CarModule } from './car/car.module';
-import { Brand } from './crawler/entities/brand.entity';
+import { Brand } from './car/entities/brand.entity';
 import { Car } from './car/entities/car.entity';
-import { Model } from './crawler/entities/model.entity';
-import { Detail } from './crawler/entities/detail.entity';
-import { CrawlerModule } from './crawler/crawler.module';
 import { Image } from './image/entities/image.entity';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseInterceptor } from './common/response.interceptor';
 import { MaintenancePart } from './record/entities/maintenacnepart.entity';
+import { Model } from './car/entities/model.entity';
+import { Detail } from './car/entities/detail.entity';
 
 type envType = 'production' | 'test' | 'development';
 const env: envType = (process.env.NODE_ENV || 'development') as envType;
@@ -63,7 +62,6 @@ const env: envType = (process.env.NODE_ENV || 'development') as envType;
     UserModule,
     SimpleAuthModule,
     RecordModule,
-    CrawlerModule,
   ],
   providers: [
     UserModule,

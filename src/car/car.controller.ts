@@ -20,8 +20,8 @@ import { UpdateCarInfoDto } from './dto/updateCarInfo.dto';
 import { ImageService } from 'src/image/image.service';
 import { CreateCarInfoDto } from './dto/createCarInfo.dto';
 import { UserService } from 'src/user/user.service';
-import { CrawlerService } from 'src/crawler/crawler.service';
 import { RecordType } from 'src/utils/type';
+import { CarListService } from './carlist.service';
 
 @Controller('cars')
 @UseGuards(SimpleAuthGuard)
@@ -33,7 +33,7 @@ export class CarController {
   @Inject()
   private readonly userService: UserService;
   @Inject()
-  private readonly crawlerService: CrawlerService;
+  private readonly carListService: CarListService;
 
   @Get()
   async findCars(@Headers('user-token') token: string) {
@@ -62,9 +62,9 @@ export class CarController {
     const { detailId, brandId, modelId, nickName } = createCarInfoDto;
 
     const user = await this.userService.findUserbyToken(token);
-    const brand = await this.crawlerService.findBrand(brandId);
-    const model = await this.crawlerService.findModel(modelId);
-    const detail = await this.crawlerService.findDetail(detailId);
+    const brand = await this.carListService.findBrand(brandId);
+    const model = await this.carListService.findModel(modelId);
+    const detail = await this.carListService.findDetail(detailId);
     const recordType: RecordType = 'car';
     const carInfo = await this.carService.createCarInfo(
       brand,
@@ -128,9 +128,9 @@ export class CarController {
     const car = await this.carService.findCarInfoById(id, user);
     const { detailId, modelId, brandId } = updateCarInfoDto;
 
-    const brand = await this.crawlerService.findBrand(brandId);
-    const model = await this.crawlerService.findModel(modelId);
-    const detail = await this.crawlerService.findDetail(detailId);
+    const brand = await this.carListService.findBrand(brandId);
+    const model = await this.carListService.findModel(modelId);
+    const detail = await this.carListService.findDetail(detailId);
     if (files) {
       const images = await this.imageService.uploadImage(files, request);
       await this.imageService.updateImage(images, car['id']);
