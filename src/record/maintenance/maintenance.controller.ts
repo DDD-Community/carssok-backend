@@ -62,8 +62,10 @@ export class MaintenanceController {
         car['id'],
       );
     }
-
-    return;
+    return {
+      id: record.id,
+      status: '저장완료',
+    };
   }
 
   @Get('/maintenances')

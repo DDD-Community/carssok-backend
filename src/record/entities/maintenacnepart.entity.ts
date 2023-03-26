@@ -1,9 +1,9 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Maintenance } from './maintenance.entity';
 
 @Entity()
 export class MaintenancePart {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
@@ -16,12 +16,7 @@ export class MaintenancePart {
   distanceForBuy: number;
 
   @ManyToOne(() => Maintenance, (maintenance) => maintenance.maintenancePart, {
-    onDelete: 'CASCADE',
-    cascade: true,
-  })
-  @JoinColumn({
-    name: 'maintence_id',
-    referencedColumnName: 'id',
+    cascade: ['insert', 'update']
   })
   maintenance: Maintenance;
 }

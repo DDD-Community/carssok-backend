@@ -1,20 +1,14 @@
-import { IsArray, ValidateNested } from 'class-validator';
-import { MaintenancePart } from '../entities/maintenacnepart.entity';
+import { IsNumber, IsString } from 'class-validator';
 
 export class MaintenanceRecordRequest {
+  
   public eventedAt: Date;
+  @IsString()
   public location: string;
+  @IsString()
   public memo: string;
   public parts: any;
+  @IsNumber()
   public distance: number;
-}
 
-export class MaintenacnePartRequest {
-  public name: string;
-  public charge: number;
-
-  constructor(part: MaintenancePart) {
-    this.name = part.title;
-    this.charge = part.charge;
-  }
 }

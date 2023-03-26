@@ -29,24 +29,28 @@ export class Car {
   @ManyToOne(() => Brand, (brand) => brand.car, {
     cascade: true,
     onDelete: 'CASCADE',
+    lazy: true
   })
   brand: Brand;
 
   @ManyToOne(() => Model, (model) => model.car, {
     cascade: true,
     onDelete: 'CASCADE',
+    lazy: true
   })
   model: Model;
 
   @ManyToOne(() => Detail, (detail) => detail.car, {
     cascade: true,
     onDelete: 'CASCADE',
+    lazy: true
   })
   detail: Detail;
 
   @ManyToOne(() => User, (user) => user.car, {
     cascade: true,
     onDelete: 'CASCADE',
+    lazy: true
   })
   user: User;
 
