@@ -97,7 +97,10 @@ export class MaintenanceController {
     const user = await this.userService.findUserbyToken(token);
     const car = await this.carService.findCarInfo(user);
     const { distance } = request;
-    return await this.maintenanceService.updateMaintenance(car, distance, id);
+    await this.maintenanceService.updateMaintenance(car, distance, id);
+    return {
+      status: '수정완료'
+    }
   }
 
   @Delete('/maintenances/:id')
@@ -107,6 +110,9 @@ export class MaintenanceController {
   ) {
     const user = await this.userService.findUserbyToken(token);
     const car = await this.carService.findCarInfo(user);
-    return await this.maintenanceService.deleteMaintenance(car, id);
+    await this.maintenanceService.deleteMaintenance(car, id);
+    return {
+      status: '삭제완료'
+    }
   }
 }
