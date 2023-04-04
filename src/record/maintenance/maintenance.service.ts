@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Between, Repository } from 'typeorm';
 import { RecordFilter } from '../dto/filter/record-filter';
@@ -8,24 +8,28 @@ import { MaintenanceRecordResponse } from '../dto/maintenance-record-response';
 import { Maintenance } from '../entities/maintenance.entity';
 import { Car } from 'src/car/entities/car.entity';
 import { MaintenancePart } from '../entities/maintenacnepart.entity';
+import { RunService } from '../run/run.service';
 
 @Injectable()
 export class MaintenanceService {
   @InjectRepository(Maintenance)
   private readonly maintenanceRepository: Repository<Maintenance>;
+  @Inject()
+  private readonly runService: RunService;
 
   async saveMaintenance(car: Car, request: MaintenanceRecordRequest) {
-    const maintenance = this.toMaintenace(car, request);
+    const distanceForBuy = await this.runService.findAccumulateDistance(car);
+    const maintenance = this.toMaintenace(car, request, distanceForBuy);
     const result = await this.maintenanceRepository.save(maintenance);
     return result;
   }
 
-  private toMaintenace(car: Car, request: MaintenanceRecordRequest): Maintenance {
-    const parts: MaintenancePart[] = JSON.parse(request.parts).map((it) => {
+  private toMaintenace(car: Car, request: MaintenanceRecordRequest, distanceForBuy): Maintenance {
+    const parts: MaintenancePart[] = request.parts.map((it) => {
       const part = new MaintenancePart();
       part.charge = it.charge;
-      part.title = it.name;
-      part.distanceForBuy = it.distanceForBuy;
+      part.title = it.title;
+      part.distanceForBuy = distanceForBuy.distance;
       return part;
     });
     const maintenance = new Maintenance();

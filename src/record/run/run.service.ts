@@ -25,7 +25,7 @@ export class RunService {
     return result;
   }
 
-  async findAccumulateDistance(car: Car): Promise<number> {
+  async findAccumulateDistance(car: Car): Promise<object> {
     const result = await this.runRepository
       .createQueryBuilder('run')
       .select('IFNULL(SUM(run.distance), 0)', 'distance')
@@ -41,7 +41,7 @@ export class RunService {
     const end: Date = new Date(filter.date);
     end.setMonth(1); //TODO JS-Date Library 검토
     const runs = await this.runRepository.findBy({
-      car: { id: car['id'] },
+      car: { id: car.id },
       ...(filter.date && { eventedAt: Between(start, end) }),
     });
     return runs.map((it) => new RunRecordResponse(it));
