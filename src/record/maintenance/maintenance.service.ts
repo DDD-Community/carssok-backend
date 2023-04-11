@@ -32,14 +32,10 @@ export class MaintenanceService {
       part.distanceForBuy = distanceForBuy.distance;
       return part;
     });
-    const maintenance = new Maintenance();
-    maintenance.maintenancePart = request.parts;
-    maintenance.eventedAt = new Date(request.eventedAt);
-    maintenance.location = request.location;
-    maintenance.memo = request.memo;
-    maintenance.car = car;
-    maintenance.maintenancePart = parts;
-    return maintenance
+    const maintenance = Maintenance.saveMaintenace(new Date(request.eventedAt), 
+      request.location, request.memo, 
+      car, parts)
+    return maintenance;
   }
 
   async findAllMaintenance(car: Car, filter: RecordFilter) { //TODO - Filter Interceptor Transform 추가

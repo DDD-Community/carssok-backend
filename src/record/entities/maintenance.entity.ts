@@ -20,4 +20,14 @@ export class Maintenance extends Record {
   })
   // @JoinColumn()
   car: Car;
+
+  static saveMaintenace(eventedAt: Date, location: string, memo: string, car: Car, parts: MaintenancePart[]) {
+    const maintenance = new Maintenance();
+    maintenance.eventedAt = eventedAt;
+    maintenance.location = location;
+    maintenance.memo = memo;
+    maintenance.car = car;
+    maintenance.maintenancePart = parts;
+    return maintenance;
+  }
 }
