@@ -21,14 +21,8 @@ export class CarService {
     user: User,
     nickName: string,
   ): Promise<Car> {
-    const car = await this.carRepository.save({
-      brand,
-      model,
-      detail,
-      user,
-      nickName,
-    });
-    return car;
+    const car = Car.createCarInfo(brand, model, detail, nickName, user);
+    return await this.carRepository.save(car);
   }
 
   async updateCarInfo(car: Car, brand: Brand, model: Model, detail: Detail) {

@@ -77,4 +77,20 @@ export class Car {
 
   @DeleteDateColumn()
   deletedAt: Date;
+
+  static createCarInfo(
+    brand: Brand,
+    model: Model,
+    detail: Detail,
+    nickName: string,
+    user: User,
+  ){
+    const car = new Car();
+    car.brand = brand;
+    car.model = model;
+    car.detail = detail;
+    car.nickName = nickName;
+    car.user = user;
+    return car;
+  }
 }
