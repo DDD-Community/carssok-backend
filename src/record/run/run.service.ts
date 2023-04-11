@@ -61,7 +61,7 @@ export class RunService {
     const record = await this.runRepository.findOne({
       where: { id, car: { id: car['id'] } },
     });
-    const result = await this.runRepository.softDelete(record);
+    const result = await this.runRepository.softDelete(record.id);
     return result.generatedMaps;
   }
 }

@@ -13,7 +13,7 @@ export abstract class Record {
   @Column()
   eventedAt: Date;
 
-  @Column()
+  @Column({nullable: true})
   memo: string;
 
   @DeleteDateColumn()
