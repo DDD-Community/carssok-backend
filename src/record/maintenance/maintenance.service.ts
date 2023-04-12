@@ -9,13 +9,17 @@ import { Maintenance } from '../entities/maintenance.entity';
 import { Car } from 'src/car/entities/car.entity';
 import { MaintenancePart } from '../entities/maintenacnepart.entity';
 import { RunService } from '../run/run.service';
+import { MaintenanceTime } from '../entities/maintenancetime.entity';
 
 @Injectable()
 export class MaintenanceService {
   @InjectRepository(Maintenance)
   private readonly maintenanceRepository: Repository<Maintenance>;
+  @InjectRepository(Maintenance)
+  private readonly maintenanceTimeRepository: Repository<MaintenanceTime>;
   @Inject()
   private readonly runService: RunService;
+  
 
   async saveMaintenance(car: Car, request: MaintenanceRecordRequest) {
     const distanceForBuy = await this.runService.findAccumulateDistance(car);
@@ -77,5 +81,32 @@ export class MaintenanceService {
       car,
     });
     return result.generatedMaps;
+  }
+
+  async findAllMaintenancePart(car: Car) {
+    console.log(car)
+    const maintenances = await this.maintenanceRepository.find({
+      relations: {
+        maintenancePart: true
+      },
+      where: {
+        car: {id: car.id},
+      }
+    });
+    const part = maintenances.map(it => {
+      return {part: it.maintenancePart, eventedAt: it.eventedAt}
+    })
+    const reuslt = part.flatMap(it =>  { 
+      return it.part.map(at => {
+        return {id: at.id, title: `${at.title}- ${it.eventedAt}`}
+      })
+    })
+    return reuslt;
+  }
+
+  //TODO - 유지보수 기간 테이블 저장 및 삭제 구현 -> API 까지 만들어야함.
+  async saveMaitenanceTime(car: Car, id: number) {
+
+    
   }
 }

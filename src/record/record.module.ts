@@ -20,6 +20,7 @@ import { CarService } from 'src/car/car.service';
 import { MaintenanceService } from './maintenance/maintenance.service';
 import { MaintenanceController } from './maintenance/maintenance.controller';
 import { MaintenancePart } from './entities/maintenacnepart.entity';
+import { MaintenanceTime } from './entities/maintenancetime.entity';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -32,6 +33,7 @@ import { MaintenancePart } from './entities/maintenacnepart.entity';
       Image,
       Car,
       MaintenancePart,
+      MaintenanceTime
     ]),
   ],
   controllers: [

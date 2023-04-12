@@ -78,6 +78,15 @@ export class MaintenanceController {
     return await this.maintenanceService.findAllMaintenance(car, filter);
   }
 
+  @Get('/maintenances/parts')
+  async findAllMaintenancePart(
+    @Headers('user-token') token: string,
+  ) {
+    const user = await this.userService.findUserbyToken(token);
+    const car = await this.carService.findCarInfo(user);
+    return await this.maintenanceService.findAllMaintenancePart(car);
+  }
+
   @Get('/maintenances/:id')
   async findMaintenanceRecord(
     @Headers('user-token') token: string,
