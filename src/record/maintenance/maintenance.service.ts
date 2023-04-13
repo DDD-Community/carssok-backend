@@ -15,7 +15,7 @@ import { MaintenanceTime } from '../entities/maintenancetime.entity';
 export class MaintenanceService {
   @InjectRepository(Maintenance)
   private readonly maintenanceRepository: Repository<Maintenance>;
-  @InjectRepository(Maintenance)
+  @InjectRepository(MaintenanceTime)
   private readonly maintenanceTimeRepository: Repository<MaintenanceTime>;
   @Inject()
   private readonly runService: RunService;
@@ -84,7 +84,6 @@ export class MaintenanceService {
   }
 
   async findAllMaintenancePart(car: Car) {
-    console.log(car)
     const maintenances = await this.maintenanceRepository.find({
       relations: {
         maintenancePart: true
@@ -104,9 +103,26 @@ export class MaintenanceService {
     return reuslt;
   }
 
-  //TODO - 유지보수 기간 테이블 저장 및 삭제 구현 -> API 까지 만들어야함.
-  async saveMaitenanceTime(car: Car, id: number) {
+  async saveMaintenanceTime(car: Car, id: number) {
+    const maintenances = await this.maintenanceRepository.find({
+      relations: {
+        maintenancePart: true
+      },
+      where: {
+        car: {id: car.id},
+      }
+    });
+    const part = maintenances.find(it => it.maintenancePart.find(at => at.id === id))
+        .maintenancePart.find(at => at.id === id)
+    const time = new MaintenanceTime();
+    time.car = car;
+    time.maintenancePart = part;
+    const result = await this.maintenanceTimeRepository.save(time);
+    return result;
+  }
 
-    
+  async deleteMaintenanceTime(car: Car, id: number) {
+    const result = await this.maintenanceTimeRepository.softDelete({id: id, car: car});
+    return result.generatedMaps
   }
 }
