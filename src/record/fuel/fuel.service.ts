@@ -64,7 +64,7 @@ export class FuelService {
     const record = await this.fuelRepository.findOne({
       where: { car: { id: car['id'] }, id },
     });
-    const result = await this.fuelRepository.softDelete(record);
+    const result = await this.fuelRepository.softDelete(record.id);
     return result.generatedMaps;
   }
 }

@@ -68,7 +68,7 @@ export class AccidentService {
     const record = await this.accidentRepository.findOne({
       where: { car: { id: car['id'] }, id },
     });
-    const result = await this.accidentRepository.softDelete(id);
+    const result = await this.accidentRepository.softDelete(record.id);
     return result.generatedMaps;
   }
 }
