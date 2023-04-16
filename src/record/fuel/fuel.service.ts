@@ -25,11 +25,7 @@ export class FuelService {
   }
 
   async findAllFuel(car: Car, filter: RecordFilter) {
-    //TODO - Filter Interceptor Transform 추가
-    const start: Date = new Date(filter.date);
-    const end: Date = new Date(filter.date);
-    end.setMonth(1); //TODO JS-Date Library 검토
-
+    const [start, end] = filter.getOneMonthRange();
     const fuels = await this.fuelRepository.findBy({
       car: { id: car.id },
       ...(filter.date && { eventedAt: Between(start, end) }),

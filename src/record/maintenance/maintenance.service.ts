@@ -42,10 +42,8 @@ export class MaintenanceService {
     return maintenance;
   }
 
-  async findAllMaintenance(car: Car, filter: RecordFilter) { //TODO - Filter Interceptor Transform 추가
-    const start: Date = new Date(filter.date);
-    const end: Date = new Date(filter.date);
-    end.setMonth(1); //TODO JS-Date Library 검토
+  async findAllMaintenance(car: Car, filter: RecordFilter) {
+    const [start, end] = filter.getOneMonthRange();
     const maintenances = await this.maintenanceRepository.find({
       relations: {
         maintenancePart: true
