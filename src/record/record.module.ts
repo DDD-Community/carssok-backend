@@ -21,6 +21,7 @@ import { MaintenanceService } from './maintenance/maintenance.service';
 import { MaintenanceController } from './maintenance/maintenance.controller';
 import { MaintenancePart } from './entities/maintenacnepart.entity';
 import { MaintenanceTime } from './entities/maintenancetime.entity';
+import { RecordController } from './record.controller';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -33,7 +34,7 @@ import { MaintenanceTime } from './entities/maintenancetime.entity';
       Image,
       Car,
       MaintenancePart,
-      MaintenanceTime
+      MaintenanceTime,
     ]),
   ],
   controllers: [
@@ -41,6 +42,7 @@ import { MaintenanceTime } from './entities/maintenancetime.entity';
     RunController,
     AccidentController,
     MaintenanceController,
+    RecordController,
   ],
   providers: [
     UserService,

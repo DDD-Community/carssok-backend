@@ -9,11 +9,11 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: logger,
   });
-  Sentry.init({
-    dsn: process.env.SENTRY_DSN,
-  });
-  app.useGlobalInterceptors(new SentryInterceptor());
-  app.useGlobalPipes(new ValidationPipe({whitelist: true, transform: true}))
+  // Sentry.init({
+  //   dsn: process.env.SENTRY_DSN,
+  // });
+  // app.useGlobalInterceptors(new SentryInterceptor());
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
   await app.listen(3000);
 }
 bootstrap();

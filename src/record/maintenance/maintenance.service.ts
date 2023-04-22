@@ -19,7 +19,6 @@ export class MaintenanceService {
   private readonly maintenanceTimeRepository: Repository<MaintenanceTime>;
   @Inject()
   private readonly runService: RunService;
-  
 
   async saveMaintenance(car: Car, request: MaintenanceRecordRequest) {
     const distanceForBuy = await this.runService.findAccumulateDistance(car);
@@ -28,7 +27,11 @@ export class MaintenanceService {
     return result;
   }
 
-  private toMaintenace(car: Car, request: MaintenanceRecordRequest, distanceForBuy): Maintenance {
+  private toMaintenace(
+    car: Car,
+    request: MaintenanceRecordRequest,
+    distanceForBuy,
+  ): Maintenance {
     const parts: MaintenancePart[] = request.parts.map((it) => {
       const part = new MaintenancePart();
       part.charge = it.charge;
@@ -36,20 +39,37 @@ export class MaintenanceService {
       part.distanceForBuy = distanceForBuy.distance;
       return part;
     });
-    const maintenance = Maintenance.saveMaintenace(new Date(request.eventedAt), 
-      request.location, request.memo, 
-      car, parts)
+    const maintenance = Maintenance.saveMaintenace(
+      new Date(request.eventedAt),
+      request.location,
+      request.memo,
+      car,
+      parts,
+    );
     return maintenance;
+  }
+
+  async findMaintenance() {
+    return await this.maintenanceRepository.findOne({
+      where: {},
+      select: {
+        eventedAt: true,
+        location: true,
+      },
+      order: {
+        createdAt: 'DESC',
+      },
+    });
   }
 
   async findAllMaintenance(car: Car, filter: RecordFilter) {
     const [start, end] = filter.getOneMonthRange();
     const maintenances = await this.maintenanceRepository.find({
       relations: {
-        maintenancePart: true
+        maintenancePart: true,
       },
       where: {
-        car: {id: car.id},
+        car: { id: car.id },
         ...(filter.date && { eventedAt: Between(start, end) }),
       },
     });
@@ -84,34 +104,35 @@ export class MaintenanceService {
   async findAllMaintenancePart(car: Car) {
     const maintenances = await this.maintenanceRepository.find({
       relations: {
-        maintenancePart: true
+        maintenancePart: true,
       },
       where: {
-        car: {id: car.id},
-      }
+        car: { id: car.id },
+      },
     });
-    const part = maintenances.map(it => {
-      return {part: it.maintenancePart, eventedAt: it.eventedAt}
-    })
-    const reuslt = part.flatMap(it =>  { 
-      return it.part.map(at => {
-        return {id: at.id, title: `${at.title}- ${it.eventedAt}`}
-      })
-    })
+    const part = maintenances.map((it) => {
+      return { part: it.maintenancePart, eventedAt: it.eventedAt };
+    });
+    const reuslt = part.flatMap((it) => {
+      return it.part.map((at) => {
+        return { id: at.id, title: `${at.title}- ${it.eventedAt}` };
+      });
+    });
     return reuslt;
   }
 
   async saveMaintenanceTime(car: Car, id: number) {
     const maintenances = await this.maintenanceRepository.find({
       relations: {
-        maintenancePart: true
+        maintenancePart: true,
       },
       where: {
-        car: {id: car.id},
-      }
+        car: { id: car.id },
+      },
     });
-    const part = maintenances.find(it => it.maintenancePart.find(at => at.id === id))
-        .maintenancePart.find(at => at.id === id)
+    const part = maintenances
+      .find((it) => it.maintenancePart.find((at) => at.id === id))
+      .maintenancePart.find((at) => at.id === id);
     const time = new MaintenanceTime();
     time.car = car;
     time.maintenancePart = part;
@@ -120,7 +141,10 @@ export class MaintenanceService {
   }
 
   async deleteMaintenanceTime(car: Car, id: number) {
-    const result = await this.maintenanceTimeRepository.softDelete({id: id, car: car});
-    return result.generatedMaps
+    const result = await this.maintenanceTimeRepository.softDelete({
+      id: id,
+      car: car,
+    });
+    return result.generatedMaps;
   }
 }

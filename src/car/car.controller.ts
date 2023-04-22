@@ -78,7 +78,7 @@ export class CarController {
       const images = await this.imageService.uploadImage(files, request);
 
       const car = await this.carService.findCarInfoById(carInfo['id'], user);
-      console.log(car);
+
       await this.imageService.saveImage(
         images,
         car['id'],
@@ -166,5 +166,4 @@ export class CarController {
       status: '삭제완료',
     };
   }
-
 }
