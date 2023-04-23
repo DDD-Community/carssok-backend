@@ -32,7 +32,7 @@ export class MaintenanceService {
     request: MaintenanceRecordRequest,
     distanceForBuy,
   ): Maintenance {
-    const parts: MaintenancePart[] = request.parts.map((it) => {
+    const parts: MaintenancePart[] = request.parts?.map((it) => {
       const part = new MaintenancePart();
       part.charge = it.charge;
       part.title = it.title;

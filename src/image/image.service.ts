@@ -40,7 +40,7 @@ export class ImageService {
         files[i].originalname,
       )}`;
       const params: PutObjectCommandInput = {
-        Bucket: 'carssok',
+        Bucket: process.env.AWS_S3_BUCKET,
         Key: key,
         Body: files[i].buffer,
         ContentLength: files[i].size,
