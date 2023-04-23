@@ -25,6 +25,19 @@ export class RunService {
     return result;
   }
 
+  async findRun() {
+    return await this.runRepository.findOne({
+      where: {},
+      select: {
+        eventedAt: true,
+        distance: true,
+      },
+      order: {
+        createdAt: 'DESC',
+      },
+    });
+  }
+
   async findAccumulateDistance(car: Car): Promise<object> {
     const result = await this.runRepository
       .createQueryBuilder('run')
@@ -46,7 +59,7 @@ export class RunService {
 
   async updateRun(distance: number, id: number, car: Car) {
     const run = await this.runRepository.findOneBy({
-      id, 
+      id,
       car: { id: car['id'] },
     });
     const updatedRunRecord = { ...run, distance };

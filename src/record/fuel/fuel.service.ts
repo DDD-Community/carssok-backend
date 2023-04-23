@@ -24,6 +24,19 @@ export class FuelService {
     return result;
   }
 
+  async findFuel() {
+    return await this.fuelRepository.findOne({
+      where: {},
+      select: {
+        eventedAt: true,
+        location: true,
+      },
+      order: {
+        createdAt: 'DESC',
+      },
+    });
+  }
+
   async findAllFuel(car: Car, filter: RecordFilter) {
     const [start, end] = filter.getOneMonthRange();
     const fuels = await this.fuelRepository.findBy({

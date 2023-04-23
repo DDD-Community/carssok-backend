@@ -46,6 +46,19 @@ export class AccidentService {
     return new AccidentRecordResponse(accident);
   }
 
+  async findAccident() {
+    return await this.accidentRepository.findOne({
+      where: {},
+      select: {
+        eventedAt: true,
+        location: true,
+      },
+      order: {
+        createdAt: 'desc',
+      },
+    });
+  }
+
   async updateAccidentById(
     id: number,
     rest: Omit<AccidentRecordRequest, 'eventedAt'>,
