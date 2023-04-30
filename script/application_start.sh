@@ -1,1 +1,1 @@
-~/pm2 restart main
+pm2 restart main
