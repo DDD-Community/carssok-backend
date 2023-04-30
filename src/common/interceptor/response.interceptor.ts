@@ -12,17 +12,20 @@ export interface Response<T> {
   data: T;
 }
 
-
 @Injectable()
 export class ResponseInterceptor<T> implements NestInterceptor<T, Response<T>> {
-  intercept(context: ExecutionContext, next: CallHandler): Observable<Response<T>> {
-    return next.handle()
-    .pipe(
-      map((data) => ({
-        statusCode: context.switchToHttp().getResponse().statusCode,
-        message: data.message ? data.message: "",
-        data: data
-      })),
+  intercept(
+    context: ExecutionContext,
+    next: CallHandler,
+  ): Observable<Response<T>> {
+    return next.handle().pipe(
+      map((data) => {
+        return {
+          statusCode: context.switchToHttp().getResponse().statusCode,
+          message: data.message ? data.message : '',
+          data: data,
+        };
+      }),
     );
   }
 }

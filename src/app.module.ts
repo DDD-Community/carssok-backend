@@ -12,7 +12,7 @@ import { SimpleAuthModule } from './simple-auth/simple-auth.module';
 import { RecordModule } from './record/record.module';
 import { CarModule } from './car/car.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
-import { ResponseInterceptor } from './common/response.interceptor';
+import { ResponseInterceptor } from './common/interceptor/response.interceptor';
 
 type envType = 'production' | 'test' | 'development';
 const env: envType = (process.env.NODE_ENV || 'development') as envType;

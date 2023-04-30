@@ -47,7 +47,6 @@ export class AccidentController {
     @Body() request: AccidentRecordRequest,
     @UploadedFiles() files?: Express.Multer.File[],
   ) {
-    console.log(request);
     const { eventedAt, ...rest } = request;
     const user = await this.userService.findUserbyToken(token);
     const car = await this.carService.findCarInfo(user);
