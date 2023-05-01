@@ -15,10 +15,7 @@ import {
   Headers,
   Req,
 } from '@nestjs/common';
-import {
-  AnyFilesInterceptor,
-  FilesInterceptor,
-} from '@nestjs/platform-express';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { SimpleAuthGuard } from 'src/simple-auth/simple-auth.guard';
 import { UserService } from 'src/user/user.service';
 import { RecordFilter } from '../dto/filter/record-filter';
@@ -28,7 +25,7 @@ import { CarService } from 'src/car/car.service';
 import { ImageService } from 'src/image/image.service';
 
 @Controller('record')
-@UseInterceptors(FilesInterceptor('files', 1))
+@UseInterceptors(FilesInterceptor('files', 5))
 @UseGuards(SimpleAuthGuard)
 export class MaintenanceController {
   @Inject()
@@ -79,9 +76,7 @@ export class MaintenanceController {
   }
 
   @Get('/maintenances/parts')
-  async findAllMaintenancePart(
-    @Headers('user-token') token: string,
-  ) {
+  async findAllMaintenancePart(@Headers('user-token') token: string) {
     const user = await this.userService.findUserbyToken(token);
     const car = await this.carService.findCarInfo(user);
     return await this.maintenanceService.findAllMaintenancePart(car);
@@ -108,8 +103,8 @@ export class MaintenanceController {
     const { distance } = request;
     await this.maintenanceService.updateMaintenance(car, distance, id);
     return {
-      status: '수정완료'
-    }
+      status: '수정완료',
+    };
   }
 
   @Delete('/maintenances/:id')
@@ -121,7 +116,7 @@ export class MaintenanceController {
     const car = await this.carService.findCarInfo(user);
     await this.maintenanceService.deleteMaintenance(car, id);
     return {
-      status: '삭제완료'
-    }
+      status: '삭제완료',
+    };
   }
 }
