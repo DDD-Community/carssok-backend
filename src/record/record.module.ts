@@ -22,6 +22,9 @@ import { MaintenanceController } from './maintenance/maintenance.controller';
 import { MaintenancePart } from './entities/maintenacnepart.entity';
 import { MaintenanceTime } from './entities/maintenancetime.entity';
 import { RecordController } from './record.controller';
+import { Detail } from 'src/car/entities/detail.entity';
+import { Brand } from 'src/car/entities/brand.entity';
+import { Model } from 'src/car/entities/model.entity';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -32,6 +35,9 @@ import { RecordController } from './record.controller';
       User,
       Device,
       Image,
+      Detail,
+      Brand,
+      Model,
       Car,
       MaintenancePart,
       MaintenanceTime,

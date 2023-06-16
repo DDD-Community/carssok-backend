@@ -23,34 +23,34 @@ export class Car {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  nickName: string;
+  @Column({ nullable: true })
+  nickName?: string;
 
   @ManyToOne(() => Brand, (brand) => brand.car, {
     cascade: true,
     onDelete: 'CASCADE',
-    lazy: true
+    lazy: true,
   })
   brand: Brand;
 
   @ManyToOne(() => Model, (model) => model.car, {
     cascade: true,
     onDelete: 'CASCADE',
-    lazy: true
+    lazy: true,
   })
   model: Model;
 
   @ManyToOne(() => Detail, (detail) => detail.car, {
     cascade: true,
     onDelete: 'CASCADE',
-    lazy: true
+    lazy: true,
   })
   detail: Detail;
 
   @ManyToOne(() => User, (user) => user.car, {
     cascade: true,
     onDelete: 'CASCADE',
-    lazy: true
+    lazy: true,
   })
   user: User;
 
@@ -78,18 +78,11 @@ export class Car {
   @DeleteDateColumn()
   deletedAt: Date;
 
-  static createCarInfo(
-    brand: Brand,
-    model: Model,
-    detail: Detail,
-    nickName: string,
-    user: User,
-  ){
+  static createCarInfo(brand: Brand, model: Model, detail: Detail, user: User) {
     const car = new Car();
     car.brand = brand;
     car.model = model;
     car.detail = detail;
-    car.nickName = nickName;
     car.user = user;
     return car;
   }
