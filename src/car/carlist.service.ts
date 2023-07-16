@@ -28,6 +28,7 @@ export class CarListService {
     });
   }
 
+  // API: 브랜드 객체를 넘겨받아 해당 브랜드안 모델들을 조회한다.
   async findModels(brand: Brand) {
     return await this.modelRepository
       .createQueryBuilder('model')

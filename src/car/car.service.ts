@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Body, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Car } from './entities/car.entity';
@@ -12,17 +12,41 @@ export class CarService {
   constructor(
     @InjectRepository(Car)
     private readonly carRepository: Repository<Car>,
+    @InjectRepository(Detail)
+    private readonly detailRepository: Repository<Detail>,
+    @InjectRepository(Brand)
+    private readonly brandRepository: Repository<Brand>,
+    @InjectRepository(Model)
+    private readonly modelRepository: Repository<Model>,
   ) {}
 
-  async createCarInfo(
-    brand: Brand,
-    model: Model,
-    detail: Detail,
-    user: User,
-    nickName: string,
-  ): Promise<Car> {
-    const car = Car.createCarInfo(brand, model, detail, nickName, user);
-    return await this.carRepository.save(car);
+  async createMyCar(@Body('detailId') detailId: number, user: User) {
+    try {
+      const result = await this.detailRepository
+        .createQueryBuilder('detail')
+        .leftJoinAndSelect('detail.model', 'model')
+        .leftJoinAndSelect('model.brand', 'brand')
+        .where('detail.id = :id', { id: detailId })
+        .getOne();
+
+      const brand = await this.brandRepository.findOne({
+        where: { id: result.model.brand.id },
+      });
+      const model = await this.modelRepository.findOne({
+        where: { id: result.model.id },
+      });
+      const detail = await this.detailRepository.findOne({
+        where: { id: result.id },
+      });
+
+      const car = await Car.createCarInfo(brand, model, detail, user);
+      const myCar = await this.carRepository.save(car);
+      if (!myCar) throw new Error('occured error during registering my car');
+      return myCar;
+    } catch (e) {
+      console.error(e);
+      throw new Error(e);
+    }
   }
 
   async updateCarInfo(car: Car, brand: Brand, model: Model, detail: Detail) {
