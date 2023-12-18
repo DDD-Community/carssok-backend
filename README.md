@@ -1,73 +1,121 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Carssok
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+### 서비스 소개
+- Carssok은 차량을 탈것 이상의 의미로 소중하게 여기는 사람들을 위한 차량 관리형 서비스입니다. 차량을 자신의 한 부분처럼 특별하게 여기는 유저들은 Carssok의 서비스를 이용하여 정비, 주유, 사고, 주행에 대한  일지 및 일어난 이벤트를 기록할수있습니다. 기록한 날짜나 관리타입 시기에 따라 적잘한 정비 시기를 자동으로 알림받거나 일어난 이벤트에 유저가 적절하게 대응할수 있도록 도와주는 차량 관리 유틸 서비스입니다.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+### 기술 스택
+- nestJs
+- typeorm
+- mysql
+- AWS S3
+- docker
+- github actions
+- sentry
+- winston
 
-## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+### Carssok 폴더구조
 
-## Installation
-
-```bash
-$ npm install
+```
+📦src
+ ┣ 📂car
+ ┃ ┣ 📂dto
+ ┃ ┃ ┣ 📜createCarInfo.dto.ts
+ ┃ ┃ ┗ 📜updateCarInfo.dto.ts
+ ┃ ┣ 📂entities
+ ┃ ┃ ┣ 📜brand.entity.ts
+ ┃ ┃ ┣ 📜car.entity.ts
+ ┃ ┃ ┣ 📜detail.entity.ts
+ ┃ ┃ ┗ 📜model.entity.ts
+ ┃ ┣ 📜car.controller.ts
+ ┃ ┣ 📜car.module.ts
+ ┃ ┣ 📜car.service.ts
+ ┃ ┣ 📜carlist.controller.ts
+ ┃ ┗ 📜carlist.service.ts
+ ┣ 📂common
+ ┃ ┣ 📂filter
+ ┃ ┃ ┗ 📜common-exception.filter.ts
+ ┃ ┗ 📂interceptor
+ ┃ ┃ ┣ 📜response.interceptor.spec.ts
+ ┃ ┃ ┣ 📜response.interceptor.ts
+ ┃ ┃ ┣ 📜sentry.interceptor.spec.ts
+ ┃ ┃ ┗ 📜sentry.interceptor.ts
+ ┣ 📂image
+ ┃ ┣ 📂entities
+ ┃ ┃ ┗ 📜image.entity.ts
+ ┃ ┗ 📜image.service.ts
+ ┣ 📂record
+ ┃ ┣ 📂accident
+ ┃ ┃ ┣ 📜accident.controller.spec.ts
+ ┃ ┃ ┣ 📜accident.controller.ts
+ ┃ ┃ ┣ 📜accident.service.spec.ts
+ ┃ ┃ ┗ 📜accident.service.ts
+ ┃ ┣ 📂dto
+ ┃ ┃ ┣ 📂filter
+ ┃ ┃ ┃ ┣ 📜base-filter.ts
+ ┃ ┃ ┃ ┗ 📜record-filter.ts
+ ┃ ┃ ┣ 📜accident-list-record-response.ts
+ ┃ ┃ ┣ 📜accident-record-request.ts
+ ┃ ┃ ┣ 📜accident-record-response.ts
+ ┃ ┃ ┣ 📜fuel-list-record-response.ts
+ ┃ ┃ ┣ 📜fuel-record-request.ts
+ ┃ ┃ ┣ 📜fuel-record-response.ts
+ ┃ ┃ ┣ 📜maintenance-list-record-response.ts
+ ┃ ┃ ┣ 📜maintenance-record-request.ts
+ ┃ ┃ ┣ 📜maintenance-record-response.ts
+ ┃ ┃ ┣ 📜run-record-request.ts
+ ┃ ┃ ┗ 📜run-record-response.ts
+ ┃ ┣ 📂entities
+ ┃ ┃ ┣ 📜accident.entity.ts
+ ┃ ┃ ┣ 📜fuel.entity.ts
+ ┃ ┃ ┣ 📜maintenacnepart.entity.ts
+ ┃ ┃ ┣ 📜maintenance.entity.ts
+ ┃ ┃ ┣ 📜maintenancetime.entity.ts
+ ┃ ┃ ┣ 📜record.entity.ts
+ ┃ ┃ ┗ 📜run.entity.ts
+ ┃ ┣ 📂fuel
+ ┃ ┃ ┣ 📜fuel.controller.spec.ts
+ ┃ ┃ ┣ 📜fuel.controller.ts
+ ┃ ┃ ┣ 📜fuel.service.spec.ts
+ ┃ ┃ ┗ 📜fuel.service.ts
+ ┃ ┣ 📂maintenance
+ ┃ ┃ ┣ 📜maintenance.controller.spec.ts
+ ┃ ┃ ┣ 📜maintenance.controller.ts
+ ┃ ┃ ┣ 📜maintenance.service.spec.ts
+ ┃ ┃ ┗ 📜maintenance.service.ts
+ ┃ ┣ 📂run
+ ┃ ┃ ┣ 📜run.controller.spec.ts
+ ┃ ┃ ┣ 📜run.controller.ts
+ ┃ ┃ ┣ 📜run.service.spec.ts
+ ┃ ┃ ┗ 📜run.service.ts
+ ┃ ┣ 📜record.controller.ts
+ ┃ ┗ 📜record.module.ts
+ ┣ 📂simple-auth
+ ┃ ┣ 📜simple-auth.controller.spec.ts
+ ┃ ┣ 📜simple-auth.controller.ts
+ ┃ ┣ 📜simple-auth.guard.spec.ts
+ ┃ ┣ 📜simple-auth.guard.ts
+ ┃ ┣ 📜simple-auth.middleware.spec.ts
+ ┃ ┣ 📜simple-auth.middleware.ts
+ ┃ ┗ 📜simple-auth.module.ts
+ ┣ 📂user
+ ┃ ┣ 📂entities
+ ┃ ┃ ┣ 📜device.entity.ts
+ ┃ ┃ ┗ 📜user.entity.ts
+ ┃ ┣ 📜user.controller.spec.ts
+ ┃ ┣ 📜user.controller.ts
+ ┃ ┣ 📜user.module.ts
+ ┃ ┣ 📜user.service.spec.ts
+ ┃ ┗ 📜user.service.ts
+ ┣ 📂utils
+ ┃ ┣ 📜aws.ts
+ ┃ ┣ 📜encryption.ts
+ ┃ ┣ 📜type.ts
+ ┃ ┗ 📜winston.util.ts
+ ┣ 📜app.module.ts
+ ┗ 📜main.ts
 ```
 
-## Running the app
+### Carssok ERD
 
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+![카쏙](https://private-user-images.githubusercontent.com/79198426/287697726-b1198588-51ac-4255-8348-3b3b26eeee69.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTEiLCJleHAiOjE3MDE2OTM0MTksIm5iZiI6MTcwMTY5MzExOSwicGF0aCI6Ii83OTE5ODQyNi8yODc2OTc3MjYtYjExOTg1ODgtNTFhYy00MjU1LTgzNDgtM2IzYjI2ZWVlZTY5LnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFJV05KWUFYNENTVkVINTNBJTJGMjAyMzEyMDQlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjMxMjA0VDEyMzE1OVomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWJjNzJiYmRmZTQ0ODg2NzAxMmZkYjFhZDRiODUwOWY1MGUwMDIxZmNjYmY1OTIxZjUxMTVjNGRiM2VlMWRhZjQmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.Rdh6Gq-i_AvSgOOwpo-weFUIPHvhZ-9VuCCk4k5Ap7A)
